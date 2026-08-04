@@ -1,6 +1,14 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Tipografías self-hosted (@fontsource) para evitar CLS y dependencia externa.
+   Outfit 700 = títulos; Quicksand 500 = texto (DESIGN_SYSTEM). */
+@import '@fontsource/outfit/700.css';
+@import '@fontsource/quicksand/400.css';
+@import '@fontsource/quicksand/500.css';
+@import '@fontsource/quicksand/600.css';
+@import '@fontsource/quicksand/700.css';
+
 /*
   DESIGN SYSTEM — Marca de crochet (DESIGN_SYSTEM.md)
   Convertido a tokens CSS-first de Tailwind v4.

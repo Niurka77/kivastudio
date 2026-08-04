@@ -1,22 +1,36 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import { Button } from '@/components/ui/button';
+import Reveal from '@/islands/motion/Reveal';
 ---
 
 <Layout title="Base del proyecto">
   <main
-    class="mx-auto flex min-h-dvh max-w-6xl flex-col items-center justify-center gap-6 px-6 py-24 text-center"
+    class="mx-auto flex min-h-dvh max-w-4xl flex-col items-center justify-center gap-8 px-6 py-24 text-center"
   >
-    <p class="font-heading text-sm tracking-wide text-primary-strong">
-      Kiva Studio — base lista
-    </p>
-    <h1 class="font-heading text-4xl font-bold text-foreground sm:text-5xl">
-      Sprint 1 completado
-    </h1>
-    <p class="max-w-xl text-lg text-muted-foreground">
-      Estructura y configuración de Astro, React, Tailwind, shadcn/ui y el stack de la
-      marca. Las páginas visuales comienzan en el siguiente sprint.
-    </p>
-    <Button client:visible>Botón primario</Button>
+    <Reveal client:load>
+      <p class="font-heading text-sm tracking-wide text-primary-strong">
+        Kiva Studio — sistema de diseño
+      </p>
+      <h1 class="font-heading text-4xl font-bold text-foreground sm:text-5xl">
+        Sprint 2 completado
+      </h1>
+      <p class="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
+        Tipografía self-hosted, primitivas de marca y sistema de movimiento. Las páginas
+        visuales comienzan en el siguiente sprint.
+      </p>
+    </Reveal>
+
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <button
+        class="rounded-[16px] bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02]"
+      >
+        Primario
+      </button>
+      <button
+        class="rounded-[16px] border border-input bg-background px-6 py-3 text-sm font-medium text-primary-strong transition-colors hover:bg-primary-soft/40"
+      >
+        Secundario
+      </button>
+    </div>
   </main>
 </Layout>
