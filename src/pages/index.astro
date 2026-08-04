@@ -1,0 +1,22 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { Button } from '@/components/ui/button';
+---
+
+<Layout title="Base del proyecto">
+  <main
+    class="mx-auto flex min-h-dvh max-w-6xl flex-col items-center justify-center gap-6 px-6 py-24 text-center"
+  >
+    <p class="font-heading text-sm tracking-wide text-primary-strong">
+      Kiva Studio — base lista
+    </p>
+    <h1 class="font-heading text-4xl font-bold text-foreground sm:text-5xl">
+      Sprint 1 completado
+    </h1>
+    <p class="max-w-xl text-lg text-muted-foreground">
+      Estructura y configuración de Astro, React, Tailwind, shadcn/ui y el stack de la
+      marca. Las páginas visuales comienzan en el siguiente sprint.
+    </p>
+    <Button client:visible>Botón primario</Button>
+  </main>
+</Layout>

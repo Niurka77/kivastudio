@@ -1,0 +1,15 @@
+# Build / generated
+dist/
+.vercel/
+.astro/
+node_modules/
+public/
+
+# Documentación fuente: su estructura/tono se conserva tal cual
+*.md
+*.mdx
+
+# Archivos de entorno
+.env
+.env.*
+!.env.example

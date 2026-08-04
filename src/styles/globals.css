@@ -1,0 +1,119 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/*
+  DESIGN SYSTEM — Marca de crochet (DESIGN_SYSTEM.md)
+  Convertido a tokens CSS-first de Tailwind v4.
+
+  Paleta oficial:
+  - Fondo principal        #FFFFFF
+  - Fondo secundario       #FDF5F9
+  - Texto                  #1B1A1C
+  - Color principal        #F25F9D (botones, enlaces, detalles, activos)
+  - Rosa suave             #E8C7E1 (fondos suaves, tarjetas, etiquetas)
+  - Color secundario       #F77924 (solo promociones/descuentos/avisos)
+
+  Accesibilidad (ADR B.1): el texto de marca usa `primary-foreground` sobre las
+  superficies adecuadas y una variante oscura (`primary-strong`) para cumplir
+  WCAG AA cuando el rosa principal se usa como color de texto en fondo claro.
+*/
+
+@theme inline {
+  /* Fondo / superficies */
+  --color-background: #ffffff;
+  --color-foreground: #1b1a1c;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #1b1a1c;
+
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1b1a1c;
+
+  --color-secondary: #fdf5f9;
+  --color-secondary-foreground: #1b1a1c;
+
+  --color-muted: #f8e9f1;
+  --color-muted-foreground: #6b5f66;
+
+  /* Marca */
+  --color-primary: #f25f9d;
+  --color-primary-foreground: #ffffff;
+  --color-primary-strong: #be185d; /* texto interactivo en fondo claro (WCAG AA) */
+  --color-primary-soft: #e8c7e1; /* rosa suave: superficies, tarjetas, etiquetas */
+
+  --color-accent: #f77924; /* solo promociones / descuentos / avisos */
+  --color-accent-foreground: #ffffff;
+
+  /* Estados de acción */
+  --color-destructive: #e11d48;
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #f3dfea;
+  --color-input: #f3dfea;
+  --color-ring: #f25f9d;
+
+  /* Radios (DESIGN_SYSTEM: botones/inputs 16, cards 20, imágenes 24) */
+  --radius-sm: 0.75rem; /* 12 */
+  --radius-md: 1rem; /* 16 — botones e inputs */
+  --radius-lg: 1.25rem; /* 20 — cards */
+  --radius-xl: 1.5rem; /* 24 — imágenes */
+  --radius-2xl: 2rem;
+  --radius-3xl: 2.5rem;
+  --radius-full: 9999px;
+
+  /* Tipografía (Outfit títulos, Quicksand texto) */
+  --font-heading: 'Outfit', 'Quicksand', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Quicksand', ui-sans-serif, system-ui, sans-serif;
+
+  /* Sombras suaves — nunca sombras oscuras (DESIGN_SYSTEM) */
+  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.06);
+  --shadow-soft-lg: 0 16px 48px rgb(0 0 0 / 0.08);
+
+  /* Espaciado base (DESIGN_SYSTEM: 4,8,12,16,24,32,48,64,96) en rem */
+  --spacing-ink: 0.25rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-size: 18px; /* Texto base (DESIGN_SYSTEM) */
+    font-weight: 500; /* Quicksand 500 */
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading font-bold tracking-tight;
+  }
+
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  /* Enfoque visible y coherente con la marca (accesibilidad) */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+}
+
+/* Respeta la preferencia de reducción de movimiento (WCAG / ADR D.1) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

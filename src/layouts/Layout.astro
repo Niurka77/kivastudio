@@ -1,0 +1,24 @@
+---
+import '@/styles/globals.css';
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'Estudio artesanal de crochet' } = Astro.props;
+const siteTitle = 'Kivastudio';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title == null ? siteTitle : `${title} · ${siteTitle}`}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
