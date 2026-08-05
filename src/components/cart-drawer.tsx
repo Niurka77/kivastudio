@@ -1,24 +1,35 @@
 import { useState } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { MessageCircle, Minus, Plus, Trash2, X } from 'lucide-react';
+import { Loader2, MessageCircle, Minus, Plus, Trash2, X } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { QueryProvider } from '@/components/providers/query-provider';
 import { useCartStore } from '@/stores/cart';
-import { getProductById } from '@/data/products';
+import { fetchProducts } from '@/lib/api/products';
 import { formatPrice } from '@/lib/price';
 import { waLink } from '@/lib/whatsapp';
+import type { Product } from '@/types';
 
 /**
  * Carrito lateral (drawer) + checkout por WhatsApp (ADR A.3).
- * - Unifica estado del carrito (Zustand) con catálogo para precios/ítems.
+ * - Unifica estado del carrito (Zustand) con el catálogo REAL de Supabase
+ *   (TanStack Query), de modo que los productos del carrito se resuelven con
+ *   los ids del backend, no con los datos seed.
  * - Al finalizar, abre WhatsApp con el resumen del pedido y vacía el carrito.
  * Nota: la persistencia en BD se conecta cuando exista el backend.
  */
-export default function CartDrawer() {
+function CartDrawerInner() {
   const { isOpen, closeCart, lines, setQuantity, removeLine, clear } = useCartStore(
     (s) => s,
   );
   const [removing, setRemoving] = useState<string | null>(null);
   const [checkedOut, setCheckedOut] = useState(false);
+
+  const { data: products } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+    staleTime: 30_000,
+  });
 
   const handleClose = () => {
     setCheckedOut(false);
@@ -26,10 +37,10 @@ export default function CartDrawer() {
   };
 
   const items = lines
-    .map((line) => ({ line, product: getProductById(line.productId) }))
+    .map((line) => ({ line, product: products?.find((p) => p.id === line.productId) }))
     .filter((e) => e.product) as {
     line: (typeof lines)[number];
-    product: NonNullable<ReturnType<typeof getProductById>>;
+    product: Product;
   }[];
 
   const subtotal = items.reduce(
@@ -85,7 +96,12 @@ export default function CartDrawer() {
           </div>
 
           <div className="flex-1 overflow-y-auto px-5 py-4">
-            {items.length === 0 ? (
+            {!products && lines.length > 0 ? (
+              <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground">
+                <Loader2 className="size-5 animate-spin" aria-hidden="true" />
+                <p className="text-sm">Cargando tu carrito…</p>
+              </div>
+            ) : items.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
                 <p className="text-muted-foreground">Tu carrito está vacío.</p>
                 <DialogPrimitive.Close asChild>
@@ -197,5 +213,13 @@ export default function CartDrawer() {
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
+  );
+}
+
+export default function CartDrawer() {
+  return (
+    <QueryProvider>
+      <CartDrawerInner />
+    </QueryProvider>
   );
 }
