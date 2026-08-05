@@ -1,0 +1,52 @@
+---
+import { InstagramIcon } from '@/components/brand-icons';
+
+const INSTAGRAM_URL = 'https://www.instagram.com/kiva_studio.pe/';
+const INSTAGRAM_HANDLE = '@kiva_studio.pe';
+
+const slots = [
+  { label: 'Amigurumi · Conejito', emoji: '🐰' },
+  { label: 'Osito de crochet', emoji: '🧸' },
+  { label: 'Bolso tejido', emoji: '👜' },
+  { label: 'Flores en crochet', emoji: '🌸' },
+  { label: 'Chaleco a medida', emoji: '🧶' },
+  { label: 'Regalo personalizado', emoji: '🎁' },
+];
+---
+
+<section id="instagram" class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+  <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+    <div>
+      <h2 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
+        Sigue el día a día
+      </h2>
+      <p class="mt-2 max-w-xl text-muted-foreground">
+        Nuevos tejidos, procesos y piezas únicas en nuestro Instagram.
+      </p>
+    </div>
+    <a
+      href={INSTAGRAM_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 rounded-[16px] border border-border bg-background px-5 py-2.5 text-sm font-semibold text-primary-strong transition-colors hover:bg-secondary"
+    >
+      <InstagramIcon className="size-4" aria-hidden="true" />
+      {INSTAGRAM_HANDLE}
+    </a>
+  </div>
+
+  <ul class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+    {slots.map((s) => (
+      <li
+        class:list={[
+          'flex flex-col items-center justify-center rounded-[20px] border border-border bg-background p-6 text-center shadow-soft',
+        ]}
+      >
+        <span class="text-3xl" aria-hidden="true">
+          {s.emoji}
+        </span>
+        <span class="mt-3 text-sm font-medium text-foreground">{s.label}</span>
+      </li>
+    ))}
+  </ul>
+</section>

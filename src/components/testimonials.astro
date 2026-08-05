@@ -1,0 +1,72 @@
+---
+/** Sección de testimonios/social proof de clientes. */
+interface Testimonial {
+  quote: string;
+  name: string;
+  detail: string;
+}
+
+const testimonials: Testimonial[] = [
+  {
+    quote:
+      'El amigurumi que encargué quedó idéntico a la foto y llegó a tiempo. Se nota el cariño en cada puntada.',
+    name: 'María F.',
+    detail: 'Amigurumi personalizado',
+  },
+  {
+    quote:
+      'Compré un bolso tejido para regalar y se enamoraron. Calidad y atención impecables, todo por WhatsApp.',
+    name: 'Carolina R.',
+    detail: 'Bolso Tejido',
+  },
+  {
+    quote:
+      'Pude pedir colores y detalles a medida para el cumpleaños de mi hija. Quedó precioso y muy personal.',
+    name: 'Lucía M.',
+    detail: 'Muñeco bajo pedido',
+  },
+];
+---
+
+<section id="testimonios" class="bg-secondary">
+  <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <header class="text-center">
+      <p class="text-sm font-semibold uppercase tracking-wider text-primary-strong">
+        Testimonios
+      </p>
+      <h2 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
+        Clientes que lo recibieron con una sonrisa
+      </h2>
+    </header>
+
+    <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {testimonials.map((t) => (
+        <li
+          class:list={[
+            'flex flex-col rounded-[20px] border border-border bg-background p-6 shadow-soft',
+          ]}
+        >
+          <div class="flex gap-1 text-primary" aria-label="5 de 5 estrellas">
+            {Array.from({ length: 5 }).map(() => (
+              <svg
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+                class="size-4"
+              >
+                <path d="M10 1.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L10 14.9l-5.3 2.8 1-5.8L1.5 7.7l5.9-.9z" />
+              </svg>
+            ))}
+          </div>
+          <blockquote class="mt-4 flex-1 text-sm leading-relaxed text-foreground">
+            “{t.quote}”
+          </blockquote>
+          <footer class="mt-4 border-t border-border pt-4">
+            <p class="text-sm font-semibold text-foreground">{t.name}</p>
+            <p class="text-xs text-muted-foreground">{t.detail}</p>
+          </footer>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

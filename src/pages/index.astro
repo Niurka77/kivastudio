@@ -4,12 +4,18 @@ import Navbar from '@/islands/Navbar';
 import Hero from '@/components/hero.astro';
 import Footer from '@/components/footer.astro';
 import About from '@/components/about.astro';
+import Contact from '@/components/contact.astro';
+import Testimonials from '@/components/testimonials.astro';
+import InstagramSection from '@/components/instagram-section.astro';
 import ProductCatalog from '@/islands/product-catalog';
 import CartDrawer from '@/components/cart-drawer';
 import { PRODUCTS } from '@/data/products';
 ---
 
-<Layout title="Inicio">
+<Layout
+  title="Inicio"
+  description="Kiva Studio · Estudio artesanal de crochet en Perú. Amigurumi, bolsos, ropa y accesorios tejidos a mano, únicos y con dedicación. Pedidos personalizados por WhatsApp."
+>
   <Navbar client:load />
 
   <CartDrawer client:load />
@@ -21,14 +27,11 @@ import { PRODUCTS } from '@/data/products';
 
     <About />
 
-    <section id="contacto" class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-      <h2 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
-        Contáctanos
-      </h2>
-      <p class="mt-2 max-w-xl text-muted-foreground">
-        Haz pedidos personalizados directamente por WhatsApp o por Instagram.
-      </p>
-    </section>
+    <Testimonials />
+
+    <InstagramSection />
+
+    <Contact />
   </main>
 
   <Footer />

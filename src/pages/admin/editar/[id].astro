@@ -8,7 +8,7 @@ export const prerender = false;
 const { id } = Astro.params;
 ---
 
-<AdminLayout title="Editar producto · Admin · Kiva Studio">
+<AdminLayout title="Editar producto · Admin">
   {id ? (
     <AdminGate client:load>
       <header>

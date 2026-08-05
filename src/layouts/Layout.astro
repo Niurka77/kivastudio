@@ -1,11 +1,23 @@
 ---
 import '@/styles/globals.css';
+import { env } from '@/lib/env';
+
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  type?: string;
 }
-const { title, description = 'Estudio artesanal de crochet' } = Astro.props;
+
+const {
+  title,
+  description = 'Estudio artesanal de crochet: amigurumi, bolsos y accesorios tejidos a mano en Perú. Pedidos personalizados por WhatsApp.',
+  image = `${env.siteUrl}/logo.webp`,
+  type = 'website',
+} = Astro.props;
 const siteTitle = 'Kiva Studio';
+const siteUrl = env.siteUrl;
+const fullTitle = title == null ? siteTitle : `${title} · ${siteTitle}`;
 ---
 
 <!doctype html>
@@ -14,8 +26,22 @@ const siteTitle = 'Kiva Studio';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title == null ? siteTitle : `${title} · ${siteTitle}`}</title>
-    {description && <meta name="description" content={description} />}
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={siteUrl} />
+
+    <!-- Open Graph (vista previa en WhatsApp, Instagram, Facebook) -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={siteTitle} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:url" content={siteUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
     <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/favicon-64.png" sizes="64x64" />
     <link rel="apple-touch-icon" href="/logo-192.png" />
