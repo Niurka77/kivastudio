@@ -29,7 +29,8 @@ export async function fetchOrders(): Promise<Order[]> {
     throw new Error('Debes iniciar sesión como admin para ver los pedidos');
   }
   if (!res.ok) {
-    throw new Error('No se pudieron cargar los pedidos');
+    const err = (await res.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(err?.message ?? 'No se pudieron cargar los pedidos');
   }
   return res.json() as Promise<Order[]>;
 }
