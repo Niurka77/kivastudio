@@ -120,22 +120,19 @@ export const PATCH: APIRoute = async ({ request, params }) => {
   return json(mapRow(data));
 };
 
-/** Elimina un producto (solo admin autenticado). */
+/** Elimina un producto (solo el admin dueño). */
 export const DELETE: APIRoute = async ({ request, params }) => {
   const admin = await getAdminUser(request);
   if (!admin) {
-    return new Response(JSON.stringify({ message: 'No autorizado' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return json({ message: 'No autorizado' }, 401);
+  }
+  if (admin.role !== 'owner') {
+    return json({ message: 'Solo la dueña (Kaili) puede eliminar productos.' }, 403);
   }
 
   const id = params.id;
   if (!id) {
-    return new Response(JSON.stringify({ message: 'Falta el id del producto' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return json({ message: 'Falta el id del producto' }, 400);
   }
 
   const { error } = await getSupabaseServiceClient()
@@ -143,13 +140,7 @@ export const DELETE: APIRoute = async ({ request, params }) => {
     .delete()
     .eq('id', id);
   if (error) {
-    return new Response(JSON.stringify({ message: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return json({ message: error.message }, 500);
   }
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  return json({ ok: true }, 200);
 };

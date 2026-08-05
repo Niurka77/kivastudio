@@ -2,7 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import ProductForm from '@/islands/product-form';
 import AdminGate from '@/components/admin-gate';
-import AdminSignOut from '@/islands/admin-sign-out';
+import AdminSession from '@/islands/admin-session';
 ---
 
 <Layout title="Nuevo producto · Admin">
@@ -14,7 +14,7 @@ import AdminSignOut from '@/islands/admin-sign-out';
       >
         ← Volver al panel
       </a>
-      <AdminSignOut client:load />
+      <AdminSession client:load />
     </div>
     <header class="mt-4">
       <h1 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">

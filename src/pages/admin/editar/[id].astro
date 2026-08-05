@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import AdminGate from '@/components/admin-gate';
-import AdminSignOut from '@/islands/admin-sign-out';
+import AdminSession from '@/islands/admin-session';
 import ProductEditForm from '@/islands/product-edit-form';
 
 export const prerender = false;
@@ -18,7 +18,7 @@ const { id } = Astro.params;
       >
         ← Volver al panel
       </a>
-      <AdminSignOut client:load />
+      <AdminSession client:load />
     </div>
     <header class="mt-4">
       <h1 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">

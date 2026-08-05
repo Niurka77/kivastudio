@@ -2,7 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import AdminGate from '@/components/admin-gate';
 import AdminProductsList from '@/islands/admin-products-list';
-import AdminSignOut from '@/islands/admin-sign-out';
+import AdminSession from '@/islands/admin-session';
 ---
 
 <Layout title="Admin · Kiva Studio">
@@ -20,7 +20,7 @@ import AdminSignOut from '@/islands/admin-sign-out';
         </h1>
         <p class="mt-2 text-muted-foreground">Gestiona el catálogo de Kiva Studio.</p>
       </div>
-      <AdminSignOut client:load />
+      <AdminSession client:load />
     </div>
 
     <div

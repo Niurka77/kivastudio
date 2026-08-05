@@ -7,13 +7,17 @@ import { Button } from '@/components/ui/button';
 import { AVAILABILITY_META } from '@/lib/availability';
 import { formatPrice } from '@/lib/price';
 import { deleteProduct, fetchProducts } from '@/lib/api/products';
+import { useAdminRole, ROLE_LABEL } from '@/lib/auth/admin-status';
 
 /**
  * Listado de productos del panel admin (server state -> TanStack Query).
  * Muestra los productos (incluidos inactivos) con acciones de editar y eliminar.
+ * Solo el admin dueño (owner) puede eliminar; las editoras solo editan.
  */
 function AdminProductsListInner() {
   const queryClient = useQueryClient();
+  const role = useAdminRole();
+  const canDelete = role === 'owner';
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,6 +70,11 @@ function AdminProductsListInner() {
           </Button>
         </a>
       </div>
+      {!canDelete && (
+        <p className="text-xs text-muted-foreground">
+          Eres {ROLE_LABEL[role ?? 'editor']} · solo la dueña puede eliminar productos.
+        </p>
+      )}
 
       {error && (
         <p className="rounded-lg bg-destructive/10 p-3 text-sm font-medium text-destructive">
@@ -107,30 +116,32 @@ function AdminProductsListInner() {
                     <Pencil className="size-4" />
                   </Button>
                 </a>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label={`Eliminar ${p.name}`}
-                  disabled={deletingId === p.id}
-                  onClick={() => {
-                    setError(null);
-                    if (
-                      !window.confirm(`¿Eliminar "${p.name}"? Esta acción no se deshace.`)
-                    )
-                      return;
-                    setDeletingId(p.id);
-                    mutation.mutate(p.id, {
-                      onError: (e) =>
-                        setError(e instanceof Error ? e.message : 'No se pudo eliminar'),
-                    });
-                  }}
-                >
-                  {deletingId === p.id ? (
-                    <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                  ) : (
-                    <Trash2 className="size-4 text-destructive" />
-                  )}
-                </Button>
+                {canDelete && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Eliminar ${p.name}`}
+                    disabled={deletingId === p.id}
+                    onClick={() => {
+                      setError(null);
+                      if (
+                        !window.confirm(`¿Eliminar "${p.name}"? Esta acción no se deshace.`)
+                      )
+                        return;
+                      setDeletingId(p.id);
+                      mutation.mutate(p.id, {
+                        onError: (e) =>
+                          setError(e instanceof Error ? e.message : 'No se pudo eliminar'),
+                      });
+                    }}
+                  >
+                    {deletingId === p.id ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Trash2 className="size-4 text-destructive" />
+                    )}
+                  </Button>
+                )}
               </li>
             );
           })}
