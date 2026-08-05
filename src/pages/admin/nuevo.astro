@@ -1,0 +1,37 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCreateForm from '@/islands/product-create-form';
+import AdminGate from '@/components/admin-gate';
+import AdminSignOut from '@/islands/admin-sign-out';
+---
+
+<Layout title="Nuevo producto · Admin">
+  <main class="mx-auto max-w-2xl px-4 py-14 sm:px-6">
+    <div class="flex items-center justify-between gap-4">
+      <a
+        href="/admin"
+        class="text-sm font-medium text-primary-strong underline-offset-4 hover:underline"
+      >
+        ← Volver al panel
+      </a>
+      <AdminSignOut client:load />
+    </div>
+    <header class="mt-4">
+      <h1 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
+        Nuevo producto
+      </h1>
+      <p class="mt-2 text-muted-foreground">
+        Crea una pieza para tu catálogo. Se guarda en Supabase y aparece en la tienda
+        automáticamente.
+      </p>
+    </header>
+
+    <div
+      class="mt-8 rounded-lg border border-border bg-background p-6 shadow-soft sm:p-8"
+    >
+      <AdminGate client:load>
+        <ProductCreateForm client:load />
+      </AdminGate>
+    </div>
+  </main>
+</Layout>

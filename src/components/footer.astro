@@ -1,0 +1,107 @@
+---
+import { MessageCircle } from 'lucide-react';
+import Logo from '@/components/Logo.astro';
+import { waLink, WHATSAPP_DISPLAY } from '@/lib/whatsapp';
+import { InstagramIcon } from '@/components/brand-icons';
+
+const INSTAGRAM_URL = 'https://www.instagram.com/kiva_studio.pe/';
+const INSTAGRAM_HANDLE = '@kiva_studio.pe';
+const YEAR = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-border bg-background">
+  <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+    <div class="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
+      <div>
+        <Logo />
+        <p class="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+          Estudio artesanal de crochet. Cada pieza es tejida a mano, única y con
+          dedicación.
+        </p>
+      </div>
+
+      <nav aria-label="Navegación">
+        <h3
+          class="font-heading text-sm font-bold uppercase tracking-wider text-primary-strong"
+        >
+          Tienda
+        </h3>
+        <ul class="mt-4 space-y-3">
+          <li>
+            <a
+              href="#inicio"
+              class="text-sm text-muted-foreground transition-colors hover:text-primary-strong"
+              >Inicio</a
+            >
+          </li>
+          <li>
+            <a
+              href="#productos"
+              class="text-sm text-muted-foreground transition-colors hover:text-primary-strong"
+              >Productos</a
+            >
+          </li>
+          <li>
+            <a
+              href="#nosotros"
+              class="text-sm text-muted-foreground transition-colors hover:text-primary-strong"
+              >Nosotros</a
+            >
+          </li>
+          <li>
+            <a
+              href="#contacto"
+              class="text-sm text-muted-foreground transition-colors hover:text-primary-strong"
+              >Contacto</a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      <div>
+        <h3
+          class="font-heading text-sm font-bold uppercase tracking-wider text-primary-strong"
+        >
+          Contacto
+        </h3>
+        <ul class="mt-4 space-y-3 text-sm text-muted-foreground">
+          {
+            WHATSAPP_DISPLAY && (
+              <li>
+                <a
+                  href={waLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 transition-colors hover:text-primary-strong"
+                >
+                  <MessageCircle className="size-4 text-primary" aria-hidden="true" />
+                  WhatsApp · {WHATSAPP_DISPLAY}
+                </a>
+              </li>
+            )
+          }
+          <li>
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 transition-colors hover:text-primary-strong"
+            >
+              <InstagramIcon className="size-4 text-primary" aria-hidden="true" />
+              Instagram · {INSTAGRAM_HANDLE}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-12 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 sm:flex-row"
+    >
+      <p class="text-xs text-muted-foreground">
+        © {YEAR} Kiva Studio. Todos los derechos reservados.
+      </p>
+      <p class="text-xs text-muted-foreground">Hecho a mano con ♥ en Perú</p>
+    </div>
+  </div>
+</footer>

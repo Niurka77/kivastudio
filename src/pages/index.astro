@@ -1,36 +1,35 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import Reveal from '@/islands/motion/Reveal';
+import Navbar from '@/islands/Navbar';
+import Hero from '@/components/hero.astro';
+import Footer from '@/components/footer.astro';
+import About from '@/components/about.astro';
+import ProductCatalog from '@/islands/product-catalog';
+import CartDrawer from '@/components/cart-drawer';
+import { PRODUCTS } from '@/data/products';
 ---
 
-<Layout title="Base del proyecto">
-  <main
-    class="mx-auto flex min-h-dvh max-w-4xl flex-col items-center justify-center gap-8 px-6 py-24 text-center"
-  >
-    <Reveal client:load>
-      <p class="font-heading text-sm tracking-wide text-primary-strong">
-        Kiva Studio — sistema de diseño
-      </p>
-      <h1 class="font-heading text-4xl font-bold text-foreground sm:text-5xl">
-        Sprint 2 completado
-      </h1>
-      <p class="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-        Tipografía self-hosted, primitivas de marca y sistema de movimiento. Las páginas
-        visuales comienzan en el siguiente sprint.
-      </p>
-    </Reveal>
+<Layout title="Inicio">
+  <Navbar client:load />
 
-    <div class="flex flex-wrap items-center justify-center gap-3">
-      <button
-        class="rounded-[16px] bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02]"
-      >
-        Primario
-      </button>
-      <button
-        class="rounded-[16px] border border-input bg-background px-6 py-3 text-sm font-medium text-primary-strong transition-colors hover:bg-primary-soft/40"
-      >
-        Secundario
-      </button>
-    </div>
+  <CartDrawer client:load />
+
+  <main>
+    <Hero />
+
+    <ProductCatalog client:load products={PRODUCTS} />
+
+    <About />
+
+    <section id="contacto" class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <h2 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
+        Contáctanos
+      </h2>
+      <p class="mt-2 max-w-xl text-muted-foreground">
+        Haz pedidos personalizados directamente por WhatsApp o por Instagram.
+      </p>
+    </section>
   </main>
+
+  <Footer />
 </Layout>

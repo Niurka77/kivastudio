@@ -12,6 +12,7 @@ export const env = {
   supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL,
   supabaseAnonKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
   whatsappNumber: import.meta.env.PUBLIC_WHATSAPP_NUMBER,
+  adminEmails: import.meta.env.PUBLIC_ADMIN_EMAILS ?? '',
 } as const;
 
 export function requireEnv(name: string, value: string | undefined): string {

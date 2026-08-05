@@ -1,0 +1,28 @@
+---
+/**
+ * Logo de la marca (wordmark apilado "KIVA ● STUDIO").
+ * Usa el WebP optimizado de public/ para no penalizar el peso.
+ * Ver 02_PROJECT_ARCHITECTURE.md §9 (branding).
+ */
+interface Props {
+  className?: string;
+  alt?: string;
+}
+
+const { className, alt = 'Kiva Studio' } = Astro.props;
+---
+
+<a
+  href="/"
+  aria-label="Kiva Studio — ir al inicio"
+  class="inline-flex shrink-0 rounded-[16px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+>
+  <img
+    src="/logo.webp"
+    alt={alt}
+    width={256}
+    height={256}
+    loading="lazy"
+    class={['h-12 w-auto rounded-[12px]', className].filter(Boolean).join(' ')}
+  />
+</a>

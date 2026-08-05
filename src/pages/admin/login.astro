@@ -1,0 +1,28 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import AdminLoginForm from '@/islands/admin-login-form';
+---
+
+<Layout title="Iniciar sesión · Admin">
+  <main
+    class="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-16 sm:px-6"
+  >
+    <a
+      href="/"
+      class="text-sm font-medium text-primary-strong underline-offset-4 hover:underline"
+    >
+      ← Volver a la tienda
+    </a>
+    <div class="mt-6 rounded-lg border border-border bg-background p-8 shadow-soft">
+      <h1 class="font-heading text-2xl font-bold text-foreground">
+        Panel de Kiva Studio
+      </h1>
+      <p class="mt-1 text-sm text-muted-foreground">
+        Accede con tu correo de admin para gestionar el catálogo.
+      </p>
+      <div class="mt-6">
+        <AdminLoginForm client:load />
+      </div>
+    </div>
+  </main>
+</Layout>
