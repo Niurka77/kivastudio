@@ -40,13 +40,13 @@ function ProductCatalogInner({ products: seed }: Props) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
-  const { data } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ['products'],
     queryFn: fetchProducts,
-    initialData: seed,
+    placeholderData: () => seed,
     staleTime: 30_000,
   });
-  const products = data ?? seed;
+  const products = data ?? (isPending ? seed : []);
 
   const filtered = useMemo(
     () => (filter === 'all' ? products : products.filter((p) => p.categoryId === filter)),
