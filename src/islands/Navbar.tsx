@@ -65,7 +65,7 @@ export default function Navbar() {
             width={256}
             height={256}
             loading="lazy"
-            className="h-11 w-auto rounded-[10px]"
+            className="h-11 w-auto"
           />
         </a>
 
