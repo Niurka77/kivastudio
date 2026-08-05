@@ -1,37 +1,24 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import ProductForm from '@/islands/product-form';
+import AdminLayout from '@/layouts/AdminLayout.astro';
 import AdminGate from '@/components/admin-gate';
-import AdminSession from '@/islands/admin-session';
+import ProductForm from '@/islands/product-form';
 ---
 
-<Layout title="Nuevo producto · Admin">
-  <main class="mx-auto max-w-2xl px-4 py-14 sm:px-6">
-    <div class="flex items-center justify-between gap-4">
-      <a
-        href="/admin"
-        class="text-sm font-medium text-primary-strong underline-offset-4 hover:underline"
-      >
-        ← Volver al panel
-      </a>
-      <AdminSession client:load />
-    </div>
-    <header class="mt-4">
+<AdminLayout title="Nuevo producto · Admin · Kiva Studio" active="new">
+  <AdminGate client:load>
+    <header>
       <h1 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
         Nuevo producto
       </h1>
       <p class="mt-2 text-muted-foreground">
-        Crea una pieza para tu catálogo. Se guarda en Supabase y aparece en la tienda
-        automáticamente.
+        Crea una pieza para tu catálogo. Se guarda en Supabase y aparece en la
+        tienda automáticamente.
       </p>
     </header>
-
     <div
       class="mt-8 rounded-lg border border-border bg-background p-6 shadow-soft sm:p-8"
     >
-      <AdminGate client:load>
-        <ProductForm client:load />
-      </AdminGate>
+      <ProductForm client:load />
     </div>
-  </main>
-</Layout>
+  </AdminGate>
+</AdminLayout>

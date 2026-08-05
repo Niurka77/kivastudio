@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { useCartStore } from '@/stores/cart';
 import { fetchProducts } from '@/lib/api/products';
+import { createOrder } from '@/lib/api/orders';
 import { formatPrice } from '@/lib/price';
 import { waLink } from '@/lib/whatsapp';
 import type { Product } from '@/types';
@@ -63,8 +64,24 @@ function CartDrawerInner() {
 
   const handleCheckout = () => {
     const url = waLink(buildMessage());
+    // Snapshot del pedido ANTES de vaciar el carrito, para registrarlo en BD.
+    const snapshot = {
+      items: items.map(({ line, product }) => ({
+        productId: line.productId,
+        name: product.name,
+        price: product.price,
+        quantity: line.quantity,
+      })),
+      subtotal,
+      currency: 'PEN' as const,
+    };
     setCheckedOut(true);
     window.open(url, '_blank', 'noopener,noreferrer');
+    // Registro en Supabase (no bloqueante: no debe impedir el flujo de WhatsApp).
+    void createOrder(snapshot).catch(() => {
+      // Si falla el registro, el pedido sigue en WhatsApp; lo vemos en el panel.
+      console.warn('No se pudo registrar el pedido en el panel admin');
+    });
     // Pequeño retraso para que el mensaje "Se abrió WhatsApp" se vea antes de limpiar.
     window.setTimeout(clear, 400);
   };

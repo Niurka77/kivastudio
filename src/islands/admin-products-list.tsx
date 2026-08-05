@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +20,7 @@ function AdminProductsListInner() {
   const canDelete = role === 'owner';
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   const {
     data,
@@ -57,6 +58,11 @@ function AdminProductsListInner() {
   }
 
   const products = data ?? [];
+  const filtered = search.trim()
+    ? products.filter((p) =>
+        p.name.toLowerCase().includes(search.trim().toLowerCase()),
+      )
+    : products;
 
   return (
     <div className="space-y-4">
@@ -82,13 +88,30 @@ function AdminProductsListInner() {
         </p>
       )}
 
-      {products.length === 0 ? (
+      <div className="relative">
+        <Search
+          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar producto…"
+          aria-label="Buscar producto"
+          className="h-11 w-full rounded-[12px] border border-input bg-background pl-10 pr-3 text-sm outline-none transition-colors focus:border-primary"
+        />
+      </div>
+
+      {filtered.length === 0 ? (
         <p className="py-10 text-center text-muted-foreground">
-          Aún no hay productos. Crea el primero.
+          {products.length === 0
+            ? 'Aún no hay productos. Crea el primero.'
+            : 'No se encontraron productos con esa búsqueda.'}
         </p>
       ) : (
         <ul className="space-y-3">
-          {products.map((p) => {
+          {filtered.map((p) => {
             const meta = AVAILABILITY_META[p.availability];
             return (
               <li

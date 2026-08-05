@@ -1,11 +1,11 @@
 ---
 import AdminLayout from '@/layouts/AdminLayout.astro';
 import AdminGate from '@/components/admin-gate';
-import AdminDashboard from '@/islands/admin-dashboard';
+import AdminOrdersList from '@/islands/admin-orders-list';
 ---
 
-<AdminLayout title="Panel · Admin · Kiva Studio" active="dashboard">
+<AdminLayout title="Pedidos · Admin · Kiva Studio" active="orders">
   <AdminGate client:load>
-    <AdminDashboard client:load />
+    <AdminOrdersList client:load />
   </AdminGate>
 </AdminLayout>

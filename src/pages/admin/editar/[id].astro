@@ -1,7 +1,6 @@
 ---
-import Layout from '@/layouts/Layout.astro';
+import AdminLayout from '@/layouts/AdminLayout.astro';
 import AdminGate from '@/components/admin-gate';
-import AdminSession from '@/islands/admin-session';
 import ProductEditForm from '@/islands/product-edit-form';
 
 export const prerender = false;
@@ -9,39 +8,25 @@ export const prerender = false;
 const { id } = Astro.params;
 ---
 
-<Layout title="Editar producto · Admin">
-  <main class="mx-auto max-w-2xl px-4 py-14 sm:px-6">
-    <div class="flex items-center justify-between gap-4">
-      <a
-        href="/admin"
-        class="text-sm font-medium text-primary-strong underline-offset-4 hover:underline"
-      >
-        ← Volver al panel
-      </a>
-      <AdminSession client:load />
-    </div>
-    <header class="mt-4">
-      <h1 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
-        Editar producto
-      </h1>
-      <p class="mt-2 text-muted-foreground">
-        Modifica los datos de la pieza. Los cambios se guardan en Supabase y se
-        reflejan en la tienda al instante.
-      </p>
-    </header>
-
-    <div
-      class="mt-8 rounded-lg border border-border bg-background p-6 shadow-soft sm:p-8"
-    >
-      {id ? (
-        <AdminGate client:load>
-          <ProductEditForm client:load productId={id} />
-        </AdminGate>
-      ) : (
-        <p class="py-10 text-center text-muted-foreground">
-          Falta el id del producto a editar.
+<AdminLayout title="Editar producto · Admin · Kiva Studio">
+  {id ? (
+    <AdminGate client:load>
+      <header>
+        <h1 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
+          Editar producto
+        </h1>
+        <p class="mt-2 text-muted-foreground">
+          Modifica los datos de la pieza. Los cambios se guardan en Supabase y se
+          reflejan en la tienda al instante.
         </p>
-      )}
-    </div>
-  </main>
-</Layout>
+      </header>
+      <div class="mt-8 rounded-lg border border-border bg-background p-6 shadow-soft sm:p-8">
+        <ProductEditForm client:load productId={id} />
+      </div>
+    </AdminGate>
+  ) : (
+    <p class="py-10 text-center text-muted-foreground">
+      Falta el id del producto a editar.
+    </p>
+  )}
+</AdminLayout>
