@@ -4,15 +4,34 @@ import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { getAdminUser } from '@/lib/auth/server-auth';
 
 /**
- * Server Endpoint de subida de imágenes (solo servidor, service role).
- * Recibe un archivo vía multipart/form-data (campo "file"), valida tipo y
- * tamaño, lo sube al bucket público "product-images" y devuelve su URL pública.
- * Las escrituras a Storage no se abren al anónimo (ver migración 0002).
+ * Server Endpoint de subida de medios (solo servidor, service role).
+ * Recibe multipart/form-data: campo "file" y opcional "folder".
+ * - folder "products" (default): imágenes, bucket "product-images" (5 MB).
+ * - folder "posts": imágenes o videos, bucket "posts" (50 MB) para el día a día.
+ * Las escrituras a Storage no se abren al anónimo (ver migraciones 0002 y 0004).
  */
 export const prerender = false;
 
-const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
-const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
+
+const FOLDERS: Record<
+  'products' | 'posts',
+  { bucket: string; path: string; allowed: string[]; maxSize: number }
+> = {
+  products: {
+    bucket: 'product-images',
+    path: 'products',
+    allowed: IMAGE_TYPES,
+    maxSize: 5 * 1024 * 1024,
+  },
+  posts: {
+    bucket: 'posts',
+    path: 'posts',
+    allowed: [...IMAGE_TYPES, ...VIDEO_TYPES],
+    maxSize: 50 * 1024 * 1024,
+  },
+};
 
 export const POST: APIRoute = async ({ request }) => {
   const admin = await getAdminUser(request);
@@ -31,26 +50,38 @@ export const POST: APIRoute = async ({ request }) => {
   if (!file || typeof file === 'string') {
     return json({ message: 'No se envió ningún archivo' }, 400);
   }
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    return json({ message: 'Formato no permitido (usa PNG, JPG, WEBP o SVG)' }, 400);
+
+  const folderKey = (form.get('folder') as string | null) === 'posts' ? 'posts' : 'products';
+  const folder = FOLDERS[folderKey];
+
+  if (!folder.allowed.includes(file.type)) {
+    return json(
+      {
+        message: `Formato no permitido (usa ${
+          folderKey === 'posts' ? 'PNG, JPG, WEBP, SVG, MP4 o WEBM' : 'PNG, JPG, WEBP o SVG'
+        })`,
+      },
+      400,
+    );
   }
-  if (file.size > MAX_SIZE) {
-    return json({ message: 'La imagen supera los 5 MB' }, 400);
+  if (file.size > folder.maxSize) {
+    const mb = Math.round(folder.maxSize / (1024 * 1024));
+    return json({ message: `El archivo supera los ${mb} MB` }, 400);
   }
 
   const ext = extensionFor(file.type);
-  const path = `products/${randomUUID()}.${ext}`;
+  const path = `${folder.path}/${randomUUID()}.${ext}`;
   const supabase = getSupabaseServiceClient();
 
   const { error } = await supabase.storage
-    .from('product-images')
+    .from(folder.bucket)
     .upload(path, file, { upsert: false, contentType: file.type });
 
   if (error) {
-    return json({ message: `No se pudo subir la imagen: ${error.message}`, error }, 500);
+    return json({ message: `No se pudo subir el archivo: ${error.message}`, error }, 500);
   }
 
-  const { data } = supabase.storage.from('product-images').getPublicUrl(path);
+  const { data } = supabase.storage.from(folder.bucket).getPublicUrl(path);
   return json({ url: data.publicUrl }, 201);
 };
 
@@ -64,6 +95,12 @@ function extensionFor(mime: string): string {
       return 'webp';
     case 'image/svg+xml':
       return 'svg';
+    case 'video/mp4':
+      return 'mp4';
+    case 'video/webm':
+      return 'webm';
+    case 'video/quicktime':
+      return 'mov';
     default:
       return 'bin';
   }

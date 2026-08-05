@@ -5,7 +5,7 @@ import Logo from '@/components/Logo.astro';
 
 interface Props {
   title: string;
-  active?: 'dashboard' | 'orders' | 'new';
+  active?: 'dashboard' | 'orders' | 'new' | 'reviews' | 'posts';
 }
 
 const { title, active } = Astro.props;
@@ -13,6 +13,8 @@ const { title, active } = Astro.props;
 const links = [
   { href: '/admin', id: 'dashboard', label: 'Panel' },
   { href: '/admin/pedidos', id: 'orders', label: 'Pedidos' },
+  { href: '/admin/resenas', id: 'reviews', label: 'Reseñas' },
+  { href: '/admin/novedades', id: 'posts', label: 'Novedades' },
   { href: '/admin/nuevo', id: 'new', label: 'Nuevo producto' },
 ] as const;
 

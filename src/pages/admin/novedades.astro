@@ -1,0 +1,11 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import AdminGate from '@/components/admin-gate';
+import AdminPosts from '@/islands/admin-posts';
+---
+
+<AdminLayout title="Novedades · Admin" active="posts">
+  <AdminGate client:load>
+    <AdminPosts client:load />
+  </AdminGate>
+</AdminLayout>

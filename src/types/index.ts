@@ -7,6 +7,8 @@
 
 export type { Product, CreateProductInput, UpdateProductInput } from '@/schemas/product';
 export type { Order, OrderLine, CreateOrderInput, UpdateOrderInput, OrderStatus } from '@/schemas/order';
+export type { Review, CreateReviewInput, UpdateReviewInput } from '@/schemas/review';
+export type { Post, CreatePostInput, UpdatePostInput, MediaType } from '@/schemas/post';
 
 export type Availability = 'in_stock' | 'made_to_order';
 
