@@ -1,11 +1,15 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import ProductForm from '@/islands/product-form';
 import AdminGate from '@/components/admin-gate';
 import AdminSignOut from '@/islands/admin-sign-out';
+import ProductEditForm from '@/islands/product-edit-form';
+
+export const prerender = false;
+
+const { id } = Astro.params;
 ---
 
-<Layout title="Nuevo producto · Admin">
+<Layout title="Editar producto · Admin">
   <main class="mx-auto max-w-2xl px-4 py-14 sm:px-6">
     <div class="flex items-center justify-between gap-4">
       <a
@@ -18,20 +22,26 @@ import AdminSignOut from '@/islands/admin-sign-out';
     </div>
     <header class="mt-4">
       <h1 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
-        Nuevo producto
+        Editar producto
       </h1>
       <p class="mt-2 text-muted-foreground">
-        Crea una pieza para tu catálogo. Se guarda en Supabase y aparece en la tienda
-        automáticamente.
+        Modifica los datos de la pieza. Los cambios se guardan en Supabase y se
+        reflejan en la tienda al instante.
       </p>
     </header>
 
     <div
       class="mt-8 rounded-lg border border-border bg-background p-6 shadow-soft sm:p-8"
     >
-      <AdminGate client:load>
-        <ProductForm client:load />
-      </AdminGate>
+      {id ? (
+        <AdminGate client:load>
+          <ProductEditForm client:load productId={id} />
+        </AdminGate>
+      ) : (
+        <p class="py-10 text-center text-muted-foreground">
+          Falta el id del producto a editar.
+        </p>
+      )}
     </div>
   </main>
 </Layout>

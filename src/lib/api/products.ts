@@ -1,4 +1,4 @@
-import type { CreateProductInput, Product } from '@/types';
+import type { CreateProductInput, Product, UpdateProductInput } from '@/types';
 import { getAccessToken } from '@/lib/auth/browser-auth';
 
 /**
@@ -14,6 +14,40 @@ export async function fetchProducts(): Promise<Product[]> {
     throw new Error('No se pudo cargar el catálogo');
   }
   return res.json() as Promise<Product[]>;
+}
+
+export async function fetchProduct(id: string): Promise<Product> {
+  const res = await fetch(`/api/products/${id}`);
+  if (res.status === 404) {
+    throw new Error('Producto no encontrado');
+  }
+  if (!res.ok) {
+    throw new Error('No se pudo cargar el producto');
+  }
+  return res.json() as Promise<Product>;
+}
+
+export async function updateProduct(
+  id: string,
+  input: UpdateProductInput,
+): Promise<Product> {
+  const token = await getAccessToken();
+  const res = await fetch(`/api/products/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(input),
+  });
+  if (res.status === 401) {
+    throw new Error('Debes iniciar sesión como admin para editar productos');
+  }
+  if (!res.ok) {
+    const err = (await res.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(err?.message ?? 'No se pudo actualizar el producto');
+  }
+  return res.json() as Promise<Product>;
 }
 
 export async function createProduct(input: CreateProductInput): Promise<Product> {

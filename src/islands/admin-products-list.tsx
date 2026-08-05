@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader2, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { Badge } from '@/components/ui/badge';
@@ -10,8 +10,7 @@ import { deleteProduct, fetchProducts } from '@/lib/api/products';
 
 /**
  * Listado de productos del panel admin (server state -> TanStack Query).
- * Muestra los productos (incluidos inactivos) con acción de eliminar.
- * La edición llega en un sprint posterior.
+ * Muestra los productos (incluidos inactivos) con acciones de editar y eliminar.
  */
 function AdminProductsListInner() {
   const queryClient = useQueryClient();
@@ -99,6 +98,15 @@ function AdminProductsListInner() {
                   <p className="text-sm text-muted-foreground">{formatPrice(p.price)}</p>
                 </div>
                 <Badge variant={meta.variant}>{meta.label}</Badge>
+                <a
+                  href={`/admin/editar/${p.id}`}
+                  aria-label={`Editar ${p.name}`}
+                  className="shrink-0"
+                >
+                  <Button variant="ghost" size="icon">
+                    <Pencil className="size-4" />
+                  </Button>
+                </a>
                 <Button
                   variant="ghost"
                   size="icon"
