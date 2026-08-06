@@ -52,7 +52,7 @@ export default function Navbar() {
     >
       <nav
         aria-label="Principal"
-        className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
+        className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
       >
         <a
           href="/"
@@ -65,7 +65,7 @@ export default function Navbar() {
             width={256}
             height={256}
             loading="lazy"
-            className="h-11 w-auto"
+            className="h-14 w-auto"
           />
         </a>
 
