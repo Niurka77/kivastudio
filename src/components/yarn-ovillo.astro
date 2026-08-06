@@ -1,0 +1,65 @@
+---
+/**
+ * Ovillo de lana decorativo (SVG) en los colores de la marca.
+ * Se usa en la sección "Hecho con el corazón" para envolver el contenido,
+ * como si estuviera tejido/rodeado de hilo.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 200 200"
+  aria-hidden="true"
+  focusable="false"
+  class={className}
+>
+  <circle cx="100" cy="100" r="78" fill="#f25f9d" />
+  <path
+    d="M 22 100 a 78 78 0 1 1 156 0 a 78 78 0 1 1 -156 0"
+    fill="none"
+    stroke="#e8c7e1"
+    stroke-width="7"
+    transform="rotate(0 100 100)"
+  />
+  <path
+    d="M 22 100 a 78 78 0 1 1 156 0 a 78 78 0 1 1 -156 0"
+    fill="none"
+    stroke="#be185d"
+    stroke-width="5"
+    transform="rotate(45 100 100)"
+  />
+  <path
+    d="M 22 100 a 78 78 0 1 1 156 0 a 78 78 0 1 1 -156 0"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="4"
+    opacity="0.85"
+    transform="rotate(90 100 100)"
+  />
+  <path
+    d="M 22 100 a 78 78 0 1 1 156 0 a 78 78 0 1 1 -156 0"
+    fill="none"
+    stroke="#e8c7e1"
+    stroke-width="6"
+    transform="rotate(135 100 100)"
+  />
+  <path
+    d="M 56 54 a 42 42 0 0 1 30 -20"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="6"
+    stroke-linecap="round"
+    opacity="0.75"
+  />
+  <path
+    d="M 42 158 C 18 178 28 200 60 200 C 92 200 104 182 134 188"
+    fill="none"
+    stroke="#f25f9d"
+    stroke-width="5"
+    stroke-linecap="round"
+  />
+</svg>

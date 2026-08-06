@@ -1,32 +1,42 @@
 ---
 import Logo from '@/components/Logo.astro';
+import YarnOvillo from '@/components/yarn-ovillo.astro';
 ---
 
-<section id="nosotros" class="bg-secondary">
-  <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-    <div class="grid items-center gap-10 md:grid-cols-[1fr_1.2fr]">
-      <div class="flex justify-center md:justify-start">
-        <Logo className="h-44 w-auto" />
-      </div>
+<section id="nosotros" class="relative overflow-hidden bg-secondary">
+  <YarnOvillo
+    class="absolute -left-12 -top-12 h-36 w-36 opacity-90 md:h-52 md:w-52"
+  />
+  <YarnOvillo
+    class="absolute -bottom-12 -right-10 h-32 w-32 rotate-12 opacity-90 md:h-44 md:w-44"
+  />
 
-      <div>
-        <h2 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
-          Hecho con el corazón
-        </h2>
-        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-          Kiva Studio nace del trabajo de una artesana que teje con las manos y con el
-          corazón. Ama lo que hace: crea piezas de crochet y, muy a menudo, las regala a
-          los demás, incluso sin cobrarlas, pensando siempre en los demás antes que en sí
-          misma.
-        </p>
-        <p class="mt-3 text-lg leading-relaxed text-muted-foreground">
-          Detrás de cada tejido hay una historia de generosidad. Por eso, en esta tienda
-          no vendemos "productos": compartimos piezas únicas hechas a mano, con tiempo,
-          dedicación y cariño.
-        </p>
-        <p class="mt-3 text-sm font-medium text-primary-strong">
-          — Una artesana que siempre piensa en los demás, respaldada por su familia.
-        </p>
+  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <div class="rounded-[40px] border-2 border-dashed border-primary/40 px-6 py-12 sm:px-10 sm:py-16">
+      <div class="grid items-center gap-10 md:grid-cols-[1fr_1.2fr]">
+        <div class="flex justify-center md:justify-start">
+          <Logo className="h-44 w-auto" />
+        </div>
+
+        <div>
+          <h2 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
+            Hecho con el corazón
+          </h2>
+          <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+            Kiva Studio nace del trabajo de una artesana que teje con las manos y con el
+            corazón. Ama lo que hace: crea piezas de crochet y, muy a menudo, las regala a
+            los demás, incluso sin cobrarlas, pensando siempre en los demás antes que en sí
+            misma.
+          </p>
+          <p class="mt-3 text-lg leading-relaxed text-muted-foreground">
+            Detrás de cada tejido hay una historia de generosidad. Por eso, en esta tienda
+            no vendemos "productos": compartimos piezas únicas hechas a mano, con tiempo,
+            dedicación y cariño.
+          </p>
+          <p class="mt-3 text-sm font-medium text-primary-strong">
+            — Una artesana que siempre piensa en los demás, respaldada por su familia.
+          </p>
+      </div>
       </div>
     </div>
   </div>
