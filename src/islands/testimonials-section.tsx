@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, Loader2, Send, Star } from 'lucide-react';
+import { Loader2, Send, Star } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { Button } from '@/components/ui/button';
@@ -12,10 +12,49 @@ import type { Review } from '@/types';
 /**
  * Sección de testimonios de la tienda.
  * - Muestra las reseñas reales guardadas en Supabase (solo activas).
+ * - Mientras no haya reseñas propias, muestra testimonios de ejemplo
+ *   (EXAMPLE_REVIEWS). En cuanto la dueña publique las primeras reseñas
+ *   reales desde el panel, los ejemplos desaparecen automáticamente.
  * - Incluye un formulario para que cualquier cliente deje su reseña.
  * Las reseñas con foto las crea la dueña desde el panel (para quienes ya
  * compraron antes); el formulario público es solo texto.
  */
+
+const EXAMPLE_REVIEWS: Review[] = [
+  {
+    id: 'ejemplo-1',
+    name: 'María F.',
+    detail: 'Amigurumi personalizado',
+    review:
+      'El amigurumi que encargué quedó idéntico a la foto y llegó a tiempo. Se nota el cariño en cada puntada.',
+    rating: 5,
+    active: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'ejemplo-2',
+    name: 'Carolina R.',
+    detail: 'Bolso tejido',
+    review:
+      'Compré un bolso tejido para regalar y se enamoraron. Calidad y atención impecables, todo por WhatsApp.',
+    rating: 5,
+    active: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'ejemplo-3',
+    name: 'Lucía M.',
+    detail: 'Muñeco bajo pedido',
+    review:
+      'Pude pedir colores y detalles a medida para el cumpleaños de mi hija. Quedó precioso y muy personal.',
+    rating: 5,
+    active: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 
 function Stars({ value, interactive, onChange }: {
   value: number;
@@ -120,14 +159,7 @@ function TestimonialsContent() {
               </li>
             )
             : reviews.length === 0
-              ? (
-                <li className="col-span-full rounded-[20px] border border-dashed border-border px-6 py-12 text-center sm:col-span-2 lg:col-span-3">
-                  <Heart className="mx-auto size-8 text-primary-soft" aria-hidden="true" />
-                  <p className="mt-3 text-muted-foreground">
-                    Aún no hay reseñas. ¿Compraste en Kiva Studio? ¡Déjanos la tuya abajo!
-                  </p>
-                </li>
-              )
+              ? EXAMPLE_REVIEWS.map((r) => <ReviewCard key={r.id} review={r} />)
               : reviews.map((r) => <ReviewCard key={r.id} review={r} />)}
       </ul>
 
