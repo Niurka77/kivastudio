@@ -37,3 +37,6 @@ Thumbs.db
 .vercel
 .vercel
 .env*
+
+# Imagen original de la artesana (la usada se genera en public/artesana.webp)
+imagendeartesana.png
