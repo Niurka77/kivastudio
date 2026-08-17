@@ -1,5 +1,6 @@
 ---
 import Logo from '@/components/Logo.astro';
+import TypingTitle from '@/islands/TypingTitle';
 ---
 
 <section id="nosotros" class="bg-secondary">
@@ -10,9 +11,12 @@ import Logo from '@/components/Logo.astro';
       </div>
 
       <div>
-        <h2 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
-          Hecho con el corazón
-        </h2>
+        <TypingTitle
+          client:visible
+          text="Hecho con el corazón"
+          tag="h2"
+          className="text-3xl sm:text-4xl"
+        />
         <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
           Kiva Studio nace del trabajo de una artesana que teje con las manos y con el
           corazón. Ama lo que hace: crea piezas de crochet y, muy a menudo, las regala a

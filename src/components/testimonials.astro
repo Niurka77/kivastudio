@@ -1,5 +1,6 @@
 ---
 import TestimonialsSection from '@/islands/testimonials-section';
+import TypingTitle from '@/islands/TypingTitle';
 ---
 
 <section id="testimonios" class="bg-secondary">
@@ -8,9 +9,12 @@ import TestimonialsSection from '@/islands/testimonials-section';
       <p class="text-sm font-semibold uppercase tracking-wider text-primary-strong">
         Testimonios
       </p>
-      <h2 class="font-heading text-3xl font-bold text-foreground sm:text-4xl">
-        Clientes que lo recibieron con una sonrisa
-      </h2>
+      <TypingTitle
+        client:visible
+        text="Clientes que lo recibieron con una sonrisa"
+        tag="h2"
+        className="mx-auto max-w-3xl text-3xl sm:text-4xl"
+      />
     </header>
 
     <TestimonialsSection client:load />

@@ -1,39 +1,56 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import { MOTION } from '@/lib/motion';
 
 /**
- * Titular del hero "Piezas tejidas a mano, con amor".
- * - Se escribe letra a letra (efecto máquina de escribir), breve y legible.
+ * Título animado reutilizable (estilo del hero, aplicado a todas las secciones).
+ * - Escribe el texto letra a letra (efecto máquina de escribir), breve y legible.
  * - Un ovillo de lana "teje" las letras: se bambolea mientras escribe y se
  *   asienta al terminar.
- * - Usa la fuente display de la marca (Kingthings Needles); el texto no lleva
- *   acentos, así que la manuscrita lo cubre al 100%.
+ * - Usa la fuente display de la marca (Kingthings Needles); los caracteres que
+ *   la manuscrita no tiene (acentos, ñ, ¿/¡) los completa Outfit vía fallback.
+ * - Empieza a escribir solo cuando entra en pantalla (useInView).
  * - SSR: el primer render incluye el título completo (SEO y sin-JS). En cliente
  *   se borra y empieza a escribir sin parpadeo (useLayoutEffect, antes del paint).
  * - Respeta `prefers-reduced-motion`: texto completo, sin animación (ADR D.1).
  */
 
-const FULL = 'Piezas tejidas a mano, con amor';
-const ACCENT_AT = 'Piezas tejidas a mano, '.length;
-const TYPE_SPEED = 55; // ms por letra: ~1.7s total, legible
+interface TypingTitleProps {
+  text: string;
+  /** Índice donde empieza la parte destacada (rosa fuerte). 0 = sin destacar. */
+  accentFrom?: number;
+  /** Nivel de encabezado (h1 por defecto). */
+  tag?: 'h1' | 'h2' | 'h3';
+  className?: string;
+}
+
+const TYPE_SPEED = 55; // ms por letra — legible y breve
 const CARET_STAY = MOTION.duration.slower + 500; // el cursor parpadea un momento tras terminar
 
-export default function TypingTitle() {
+export default function TypingTitle({
+  text,
+  accentFrom = 0,
+  tag: Tag = 'h1',
+  className,
+}: TypingTitleProps) {
   const prefersReduced = useReducedMotion();
-  const [count, setCount] = useState(FULL.length);
+  const ref = useRef<HTMLHeadingElement>(null);
+  const inView = useInView(ref, { once: true, margin: '0px 0px -8% 0px' });
+  const [count, setCount] = useState(text.length);
   const [done, setDone] = useState(false);
   const [showCaret, setShowCaret] = useState(true);
+  const accentStart = accentFrom > 0 ? accentFrom : text.length;
 
   useLayoutEffect(() => {
-    if (prefersReduced) return;
+    if (prefersReduced || !inView) return;
     let i = 0;
     // Reset antes del primer paint (sin parpadeo ni setState síncrono en el efecto).
     const raf = requestAnimationFrame(() => setCount(0));
     const id = setInterval(() => {
       i += 1;
-      setCount(Math.min(i, FULL.length));
-      if (i >= FULL.length) {
+      setCount(Math.min(i, text.length));
+      if (i >= text.length) {
         clearInterval(id);
         setDone(true);
       }
@@ -42,7 +59,7 @@ export default function TypingTitle() {
       cancelAnimationFrame(raf);
       clearInterval(id);
     };
-  }, [prefersReduced]);
+  }, [prefersReduced, inView, text.length]);
 
   useEffect(() => {
     if (!done) return;
@@ -50,13 +67,17 @@ export default function TypingTitle() {
     return () => clearTimeout(t);
   }, [done]);
 
-  const plain = FULL.slice(0, Math.min(count, ACCENT_AT));
-  const accent = FULL.slice(ACCENT_AT, count);
+  const shown = Math.min(count, text.length);
+  const plain = text.slice(0, Math.min(shown, accentStart));
+  const accent = text.slice(accentStart, shown);
 
   return (
-    <h1 className="font-display mt-5 text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+    <Tag
+      ref={ref}
+      className={cn('font-display font-bold leading-tight text-foreground', className)}
+    >
       <span>{plain}</span>
-      <span className="text-primary-strong">{accent}</span>
+      {accent && <span className="text-primary-strong">{accent}</span>}
 
       {showCaret && !prefersReduced && (
         <motion.span
@@ -84,11 +105,11 @@ export default function TypingTitle() {
       >
         <YarnBall />
       </motion.span>
-    </h1>
+    </Tag>
   );
 }
 
-function YarnBall() {
+export function YarnBall() {
   return (
     <svg viewBox="0 0 64 64" className="h-full w-full" fill="none" aria-hidden="true">
       {/* hebra que sale del ovillo hacia el texto */}

@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { QueryProvider } from '@/components/providers/query-provider';
+import TypingTitle from '@/islands/TypingTitle';
 import { CATEGORIES, getCategoryLabel } from '@/lib/categories';
 import { AVAILABILITY_META } from '@/lib/availability';
 import { formatPrice } from '@/lib/price';
@@ -82,9 +83,11 @@ function ProductCatalogInner({ products: seed }: Props) {
     <section id="productos" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <h2 className="font-heading text-3xl font-bold text-foreground sm:text-4xl">
-            Nuestros productos
-          </h2>
+          <TypingTitle
+            text="Nuestros productos"
+            tag="h2"
+            className="text-3xl sm:text-4xl"
+          />
           <p className="mt-2 max-w-xl text-muted-foreground">
             Piezas tejidas a mano, en stock o fabricadas bajo pedido.
           </p>

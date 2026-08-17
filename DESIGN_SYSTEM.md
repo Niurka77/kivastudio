@@ -128,9 +128,9 @@ Kingthings Needles
 Clara (la fuente solo incluye A-Z, a-z, 0-9 y puntuación básica; los acentos, ñ y ¿¡ se
 completan con Outfit mediante fallback).
 
-Se reserva SOLO para el titular del hero: "Piezas tejidas a mano, con amor" (texto sin
-acentos, cubierto al 100% por la manuscrita), con animación de tipeo y un ovillo de lana
-que teje las letras (ver `09_ANIMATION_SYSTEM.md`).
+Se reserva para los titulares de marca (hero y el título de cada sección), con animación
+de tipeo y un ovillo de lana que teje las letras (ver `09_ANIMATION_SYSTEM.md`). En la
+sección de contacto, un gatito juega con un ovillo como motivo de marca.
 
 Manuscrita artesanal.
 
