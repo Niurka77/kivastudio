@@ -121,11 +121,28 @@ Solo para:
 
 # Tipografía
 
+## Display / Brand (nuevo)
+
+Kingthings Needles
+
+Clara (la fuente solo incluye A-Z, a-z, 0-9 y puntuación básica; los acentos, ñ y ¿¡ se
+completan con Outfit mediante fallback).
+
+Se reserva SOLO para el titular del hero: "Piezas tejidas a mano, con amor" (texto sin
+acentos, cubierto al 100% por la manuscrita), con animación de tipeo y un ovillo de lana
+que teje las letras (ver `09_ANIMATION_SYSTEM.md`).
+
+Manuscrita artesanal.
+
+Artesanal, cálida y única — el equivalente digital de las agujas (needles).
+
+---
+
 ## Títulos
 
 Outfit
 
-700
+700 (fallback de Kingthings Needles para acentos, ñ, ¿ y ¡)
 
 Muy grandes.
 

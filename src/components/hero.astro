@@ -1,5 +1,6 @@
 ---
 import Reveal from '@/islands/motion/Reveal';
+import TypingTitle from '@/islands/TypingTitle';
 import { Button } from '@/components/ui/button';
 import { waLink, WHATSAPP_DISPLAY } from '@/lib/whatsapp';
 ---
@@ -14,11 +15,7 @@ import { waLink, WHATSAPP_DISPLAY } from '@/lib/whatsapp';
       >
         Hecho a mano · Crochet artesanal
       </span>
-      <h1
-        class="mt-5 font-heading text-4xl font-bold leading-tight text-foreground sm:text-5xl"
-      >
-        Piezas tejidas a mano, <span class="text-primary-strong">con amor</span>
-      </h1>
+      <TypingTitle client:load />
       <p class="mt-4 max-w-md text-lg text-muted-foreground">
         Muñecos amigurumi, accesorios y decoración únicos creados en Kiva Studio. Cada
         pieza lleva tiempo, dedicación y un toque personal.

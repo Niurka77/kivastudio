@@ -9,6 +9,17 @@
 @import '@fontsource/quicksand/600.css';
 @import '@fontsource/quicksand/700.css';
 
+/* Fuente display de la marca: "Kingthings Needles" (manuscrita/artesanal).
+   Self-hosted desde public/fonts (EULA: uso libre). Solo cubre A-Z/a-z/0-9 y
+   puntuación básica, por lo que los acentos/ñ caen a Outfit (fallback). */
+@font-face {
+  font-family: 'Kingthings Needles';
+  src: url('/fonts/kingthings-needles.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /*
   DESIGN SYSTEM — Marca de crochet (DESIGN_SYSTEM.md)
   Convertido a tokens CSS-first de Tailwind v4.
@@ -69,7 +80,8 @@
   --radius-3xl: 2.5rem;
   --radius-full: 9999px;
 
-  /* Tipografía (Outfit títulos, Quicksand texto) */
+  /* Tipografía (Outfit títulos, Quicksand texto, Kingthings solo en el titular del hero). */
+  --font-display: 'Kingthings Needles', 'Outfit', 'Quicksand', ui-sans-serif, system-ui, sans-serif;
   --font-heading: 'Outfit', 'Quicksand', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Quicksand', ui-sans-serif, system-ui, sans-serif;
 
