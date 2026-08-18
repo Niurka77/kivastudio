@@ -9,6 +9,7 @@ import Testimonials from '@/components/testimonials.astro';
 import InstagramSection from '@/components/instagram-section.astro';
 import ProductCatalog from '@/islands/product-catalog';
 import CartDrawer from '@/components/cart-drawer';
+import WelcomeVideo from '@/islands/WelcomeVideo';
 import { PRODUCTS } from '@/data/products';
 ---
 
@@ -22,6 +23,8 @@ import { PRODUCTS } from '@/data/products';
 
   <main>
     <Hero />
+
+    <WelcomeVideo client:load />
 
     <ProductCatalog client:load products={PRODUCTS} />
 

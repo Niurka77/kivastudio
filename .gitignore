@@ -38,5 +38,9 @@ Thumbs.db
 .vercel
 .env*
 
-# Imagen original de la artesana (la usada se genera en public/artesana.webp)
+# Imagen original de la artesana (la usada se genera en private-media/artesana.webp)
 imagendeartesana.png
+
+# Medios privados (video de bienvenida y foto de la artesana).
+# NUNCA se publican como estáticos: se sirven vía /api/media con token firmado.
+private-media/
