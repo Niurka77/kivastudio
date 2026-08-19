@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { CircleAlert, LoaderCircle, Pause, Play } from 'lucide-react';
 import TypingTitle from '@/islands/TypingTitle';
+import SectionDecor from '@/islands/SectionDecor';
 import { cn } from '@/lib/utils';
 import { useProtectedMedia } from '@/lib/useProtectedMedia';
 import {
   hasSectionBg,
+  sectionAlign,
+  sectionAlignClass,
   sectionBgStyle,
   sectionSubtitle,
+  sectionTextAlignStyle,
   sectionTitle,
 } from '@/lib/sections';
 import type { SiteSection } from '@/types';
@@ -61,18 +65,23 @@ export default function WelcomeVideo({ section }: { section?: SiteSection }) {
 
   const ready = status === 'ready' && url !== null;
   const bg = hasSectionBg(section?.backgroundUrl);
+  const align = sectionAlign(section);
 
   return (
     <section
       ref={containerRef}
       id="bienvenida"
       aria-label="Video de bienvenida de Kiva Studio"
-      className={cn('bg-background', bg && 'relative')}
+      className="relative overflow-hidden bg-background"
       style={sectionBgStyle(section?.backgroundUrl)}
     >
-      {bg && <div className="absolute inset-0 bg-background/60" aria-hidden="true" />}
-      <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <div className="mx-auto max-w-2xl text-center">
+      {bg && <div className="absolute inset-0 z-0 bg-background/60" aria-hidden="true" />}
+      <SectionDecor left={section?.decorationLeft} right={section?.decorationRight} />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6">
+        <div
+          className={cn('mx-auto max-w-2xl', sectionAlignClass(align))}
+          style={sectionTextAlignStyle(align)}
+        >
           <span className="inline-flex items-center gap-2 rounded-full bg-primary-soft/60 px-4 py-1.5 text-sm font-semibold text-primary-strong">
             Conócenos · Bienvenida
           </span>

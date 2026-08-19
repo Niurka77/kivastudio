@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Clapperboard, LoaderCircle } from 'lucide-react';
 import TypingTitle from '@/islands/TypingTitle';
-import { sectionBgStyle, sectionSubtitle, sectionTitle } from '@/lib/sections';
+import SectionDecor from '@/islands/SectionDecor';
+import {
+  sectionAlign,
+  sectionAlignClass,
+  sectionBgStyle,
+  sectionSubtitle,
+  sectionTextAlignStyle,
+  sectionTitle,
+} from '@/lib/sections';
 import { fetchVideos } from '@/lib/api/videos';
 import type { SiteSection, Video } from '@/types';
 
@@ -33,18 +41,20 @@ export default function VideosSection({ section }: { section?: SiteSection }) {
   }, []);
 
   const bg = sectionBgStyle(section?.backgroundUrl);
+  const align = sectionAlign(section);
 
   return (
     <section
       id="videos"
       aria-label="Videos de las creaciones"
-      className={bg ? 'relative' : 'bg-secondary'}
+      className={bg ? 'relative overflow-hidden' : 'relative overflow-hidden bg-secondary'}
       style={bg}
     >
-      {bg && <div className="absolute inset-0 bg-background/60" aria-hidden="true" />}
-      <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      {bg && <div className="absolute inset-0 z-0 bg-background/60" aria-hidden="true" />}
+      <SectionDecor left={section?.decorationLeft} right={section?.decorationRight} />
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
+          <div className={sectionAlignClass(align)} style={sectionTextAlignStyle(align)}>
             <TypingTitle
               text={sectionTitle(section, 'Videos de las creaciones')}
               tag="h2"

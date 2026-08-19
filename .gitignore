@@ -44,3 +44,6 @@ imagendeartesana.png
 # Medios privados (video de bienvenida y foto de la artesana).
 # NUNCA se publican como estáticos: se sirven vía /api/media con token firmado.
 private-media/
+
+# Video personal de presentación (no debe subirse a GitHub).
+Kiliepresentacion.mp4

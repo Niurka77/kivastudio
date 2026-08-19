@@ -1,9 +1,12 @@
 ---
 import DailyFeed from '@/islands/daily-feed';
 import TypingTitle from '@/islands/TypingTitle';
+import SectionDecor from '@/components/SectionDecor.astro';
 import { InstagramIcon } from '@/components/brand-icons';
 import {
   hasSectionBg,
+  sectionAlign,
+  sectionAlignClass,
   sectionBgCss,
   sectionSubtitle,
   sectionTitle,
@@ -15,6 +18,7 @@ interface Props {
 }
 
 const { section } = Astro.props;
+const align = sectionAlign(section);
 
 const INSTAGRAM_URL = 'https://www.instagram.com/kiva_studio.pe/';
 const INSTAGRAM_HANDLE = '@kiva_studio.pe';
@@ -22,15 +26,16 @@ const INSTAGRAM_HANDLE = '@kiva_studio.pe';
 
 <section
   id="instagram"
-  class:list={['relative', hasSectionBg(section?.backgroundUrl) && 'bg-cover bg-center']}
+  class="relative overflow-hidden"
   style={sectionBgCss(section?.backgroundUrl)}
 >
   {hasSectionBg(section?.backgroundUrl) && (
-    <div class="absolute inset-0 bg-background/60" aria-hidden="true" />
+    <div class="absolute inset-0 z-0 bg-background/60" aria-hidden="true" />
   )}
-  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
+  <SectionDecor left={section?.decorationLeft} right={section?.decorationRight} />
+  <div class="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6">
     <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-      <div>
+      <div class={sectionAlignClass(align)}>
         <TypingTitle
           client:visible
           text={sectionTitle(section, 'Sigue el día a día')}

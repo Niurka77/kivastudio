@@ -3,9 +3,12 @@ import { MessageCircle } from 'lucide-react';
 import { InstagramIcon } from '@/components/brand-icons';
 import TypingTitle from '@/islands/TypingTitle';
 import KittenWithYarn from '@/components/KittenWithYarn';
+import SectionDecor from '@/components/SectionDecor.astro';
 import { waLink, WHATSAPP_DISPLAY } from '@/lib/whatsapp';
 import {
   hasSectionBg,
+  sectionAlign,
+  sectionAlignClass,
   sectionBgCss,
   sectionSubtitle,
   sectionTitle,
@@ -17,6 +20,7 @@ interface Props {
 }
 
 const { section } = Astro.props;
+const align = sectionAlign(section);
 
 const INSTAGRAM_URL = 'https://www.instagram.com/kiva_studio.pe/';
 const INSTAGRAM_HANDLE = '@kiva_studio.pe';
@@ -24,14 +28,15 @@ const INSTAGRAM_HANDLE = '@kiva_studio.pe';
 
 <section
   id="contacto"
-  class:list={['bg-secondary', hasSectionBg(section?.backgroundUrl) && 'relative']}
+  class="relative overflow-hidden bg-secondary"
   style={sectionBgCss(section?.backgroundUrl)}
 >
   {hasSectionBg(section?.backgroundUrl) && (
-    <div class="absolute inset-0 bg-background/60" aria-hidden="true" />
+    <div class="absolute inset-0 z-0 bg-background/60" aria-hidden="true" />
   )}
-  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
-    <div class="mx-auto max-w-2xl text-center">
+  <SectionDecor left={section?.decorationLeft} right={section?.decorationRight} />
+  <div class="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <div class={['mx-auto max-w-2xl', sectionAlignClass(align)].join(' ')}>
       <KittenWithYarn client:visible className="mx-auto h-28 w-auto sm:h-36" />
       <TypingTitle
         client:visible

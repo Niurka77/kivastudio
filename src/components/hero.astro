@@ -2,11 +2,15 @@
 import Reveal from '@/islands/motion/Reveal';
 import TypingTitle from '@/islands/TypingTitle';
 import ProtectedImage from '@/islands/ProtectedImage';
+import SectionDecor from '@/components/SectionDecor.astro';
 import { Button } from '@/components/ui/button';
 import { waLink, WHATSAPP_DISPLAY } from '@/lib/whatsapp';
 import {
   hasSectionBg,
+  sectionAlign,
+  sectionAlignClass,
   sectionBgCss,
+  sectionJustifyClass,
   sectionSubtitle,
   sectionTitle,
 } from '@/lib/sections';
@@ -17,57 +21,64 @@ interface Props {
 }
 
 const { section } = Astro.props;
+const align = sectionAlign(section);
 ---
 
 <section
   id="inicio"
-  class:list={['overflow-hidden bg-secondary', hasSectionBg(section?.backgroundUrl) && 'relative']}
+  class="relative overflow-hidden bg-secondary"
   style={sectionBgCss(section?.backgroundUrl)}
 >
   {hasSectionBg(section?.backgroundUrl) && (
-    <div class="absolute inset-0 bg-background/60" aria-hidden="true" />
+    <div class="absolute inset-0 z-0 bg-background/60" aria-hidden="true" />
   )}
+  <SectionDecor left={section?.decorationLeft} right={section?.decorationRight} />
   <div
-    class="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:py-24"
+    class="relative z-10 mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:py-24"
   >
     <Reveal client:load y={24}>
-      <span
-        class="inline-flex items-center gap-2 rounded-full bg-primary-soft/60 px-4 py-1.5 text-sm font-semibold text-primary-strong"
-      >
-        Hecho a mano · Crochet artesanal
-      </span>
-      <TypingTitle
-        client:load
-        text={sectionTitle(section, 'Piezas tejidas a mano, con amor')}
-        accentFrom={23}
-        className="mt-5 text-4xl sm:text-5xl"
-      />
-      <p class="mt-4 max-w-md text-lg text-muted-foreground">
-        {sectionSubtitle(
-          section,
-          'Muñecos amigurumi, accesorios y decoración únicos creados en Kiva Studio. Cada pieza lleva tiempo, dedicación y un toque personal.',
-        )}
-      </p>
-      <div class="mt-8 flex flex-wrap items-center gap-3">
-        <a href="#productos">
-          <Button size="lg">Ver productos</Button>
-        </a>
-        <a
-          href={waLink('Hola Kiva Studio, me encantó tu trabajo.')}
-          target="_blank"
-          rel="noopener noreferrer"
+      <div class:list={['flex flex-col', sectionAlignClass(align)]}>
+        <span
+          class:list={[
+            'inline-flex items-center gap-2 rounded-full bg-primary-soft/60 px-4 py-1.5 text-sm font-semibold text-primary-strong',
+            align === 'center' ? 'self-center' : align === 'right' ? 'self-end' : 'self-start',
+          ]}
         >
-          <Button size="lg" variant="outline"> Pedidos por WhatsApp </Button>
-        </a>
+          Hecho a mano · Crochet artesanal
+        </span>
+        <TypingTitle
+          client:load
+          text={sectionTitle(section, 'Piezas tejidas a mano, con amor')}
+          accentFrom={23}
+          className="mt-5 text-4xl sm:text-5xl"
+        />
+        <p class:list={['mt-4 text-lg text-muted-foreground', align === 'left' ? 'max-w-md' : 'max-w-2xl']}>
+          {sectionSubtitle(
+            section,
+            'Muñecos amigurumi, accesorios y decoración únicos creados en Kiva Studio. Cada pieza lleva tiempo, dedicación y un toque personal.',
+          )}
+        </p>
+        <div class:list={['mt-8 flex flex-wrap items-center gap-3', sectionJustifyClass(align)]}>
+          <a href="#productos">
+            <Button size="lg">Ver productos</Button>
+          </a>
+          <a
+            href={waLink('Hola Kiva Studio, me encantó tu trabajo.')}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button size="lg" variant="outline"> Pedidos por WhatsApp </Button>
+          </a>
+        </div>
+        {
+          WHATSAPP_DISPLAY && (
+            <p class="mt-6 text-sm text-muted-foreground">
+              ¿Ideas personalizadas? Escríbenos al{' '}
+              <span class="font-semibold text-primary-strong">{WHATSAPP_DISPLAY}</span>
+            </p>
+          )
+        }
       </div>
-      {
-        WHATSAPP_DISPLAY && (
-          <p class="mt-6 text-sm text-muted-foreground">
-            ¿Ideas personalizadas? Escríbenos al{' '}
-            <span class="font-semibold text-primary-strong">{WHATSAPP_DISPLAY}</span>
-          </p>
-        )
-      }
     </Reveal>
 
     <div class="hidden items-center justify-center md:flex">

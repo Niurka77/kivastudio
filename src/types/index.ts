@@ -13,6 +13,7 @@ export type { Video, CreateVideoInput, UpdateVideoInput } from '@/schemas/video'
 export type {
   SiteSection,
   SectionKey,
+  TextAlign,
   UpdateSectionInput,
 } from '@/schemas/section';
 

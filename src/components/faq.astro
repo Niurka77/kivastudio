@@ -1,23 +1,50 @@
 ---
 import TypingTitle from '@/islands/TypingTitle';
 import FaqAccordion from '@/islands/faq-accordion';
+import SectionDecor from '@/components/SectionDecor.astro';
+import {
+  hasSectionBg,
+  sectionAlign,
+  sectionAlignClass,
+  sectionBgCss,
+  sectionSubtitle,
+  sectionTitle,
+} from '@/lib/sections';
+import type { SiteSection } from '@/types';
+
+interface Props {
+  section?: SiteSection;
+}
+
+const { section } = Astro.props;
+const align = sectionAlign(section);
 ---
 
-<section id="preguntas" class="bg-secondary">
-  <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-    <header class="mx-auto max-w-2xl text-center">
+<section
+  id="preguntas"
+  class="relative overflow-hidden bg-secondary"
+  style={sectionBgCss(section?.backgroundUrl)}
+>
+  {hasSectionBg(section?.backgroundUrl) && (
+    <div class="absolute inset-0 z-0 bg-background/60" aria-hidden="true" />
+  )}
+  <SectionDecor left={section?.decorationLeft} right={section?.decorationRight} />
+  <div class="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <header class={['mx-auto max-w-2xl', sectionAlignClass(align)].join(' ')}>
       <p class="text-sm font-semibold uppercase tracking-wider text-primary-strong">
         Preguntas frecuentes
       </p>
       <TypingTitle
         client:visible
-        text="Resolvemos tus dudas"
+        text={sectionTitle(section, 'Resolvemos tus dudas')}
         tag="h2"
         className="mt-2 text-3xl sm:text-4xl"
       />
       <p class="mt-3 text-lg text-muted-foreground">
-        Todo sobre pedidos, envíos, personalización y cuidados de tus piezas de
-        crochet.
+        {sectionSubtitle(
+          section,
+          'Todo sobre pedidos, envíos, personalización y cuidados de tus piezas de crochet.',
+        )}
       </p>
     </header>
 

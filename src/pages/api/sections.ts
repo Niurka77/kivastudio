@@ -23,6 +23,9 @@ interface SectionRow {
   title: string | null;
   subtitle: string | null;
   background_url: string | null;
+  text_align: string | null;
+  decoration_left: string | null;
+  decoration_right: string | null;
   active: boolean;
   created_at: string;
   updated_at: string;
@@ -35,6 +38,12 @@ function mapRow(row: SectionRow): SiteSection {
     title: row.title,
     subtitle: row.subtitle,
     backgroundUrl: row.background_url,
+    textAlign:
+      row.text_align === 'left' || row.text_align === 'center' || row.text_align === 'right'
+        ? row.text_align
+        : null,
+    decorationLeft: row.decoration_left,
+    decorationRight: row.decoration_right,
     active: row.active,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -90,6 +99,9 @@ export const PATCH: APIRoute = async ({ request }) => {
   if (d.title !== undefined) patch.title = d.title;
   if (d.subtitle !== undefined) patch.subtitle = d.subtitle;
   if (d.backgroundUrl !== undefined) patch.background_url = d.backgroundUrl;
+  if (d.textAlign !== undefined) patch.text_align = d.textAlign;
+  if (d.decorationLeft !== undefined) patch.decoration_left = d.decorationLeft;
+  if (d.decorationRight !== undefined) patch.decoration_right = d.decorationRight;
   if (d.active !== undefined) patch.active = d.active;
 
   const { data, error } = await getSupabaseServiceClient()

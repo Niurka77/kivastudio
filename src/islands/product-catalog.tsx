@@ -18,7 +18,15 @@ import { formatPrice } from '@/lib/price';
 import { fetchProducts } from '@/lib/api/products';
 import { useCartStore } from '@/stores/cart';
 import { waLink } from '@/lib/whatsapp';
-import { sectionBgStyle, sectionSubtitle, sectionTitle } from '@/lib/sections';
+import SectionDecor from '@/islands/SectionDecor';
+import {
+  sectionAlign,
+  sectionAlignClass,
+  sectionBgStyle,
+  sectionSubtitle,
+  sectionTextAlignStyle,
+  sectionTitle,
+} from '@/lib/sections';
 import type { Product, SiteSection } from '@/types';
 
 /**
@@ -81,15 +89,16 @@ function ProductCatalogInner({ products: seed, section }: Props) {
   const mainImage = gallery[galleryIndex] ?? selected?.imageUrl ?? '/logo.webp';
   const meta = selected ? AVAILABILITY_META[selected.availability] : null;
   const bg = sectionBgStyle(section?.backgroundUrl);
+  const align = sectionAlign(section);
 
   return (
-    <section id="productos" className={bg ? 'relative' : 'mx-auto max-w-6xl px-4 py-20 sm:px-6'} style={bg}>
+    <section id="productos" className="relative overflow-hidden" style={bg}>
+      {bg && <div className="absolute inset-0 z-0 bg-background/60" aria-hidden="true" />}
+      <SectionDecor left={section?.decorationLeft} right={section?.decorationRight} />
       {bg && (
-        <>
-          <div className="absolute inset-0 bg-background/60" aria-hidden="true" />
-          <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
-            <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-              <div>
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+            <div className={sectionAlignClass(align)} style={sectionTextAlignStyle(align)}>
                 <TypingTitle
                   text={sectionTitle(section, 'Nuestros productos')}
                   tag="h2"
@@ -121,33 +130,33 @@ function ProductCatalogInner({ products: seed, section }: Props) {
               meta={meta}
             />
           </div>
-        </>
       )}
       {!bg && (
         <>
-          <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <TypingTitle
-                text={sectionTitle(section, 'Nuestros productos')}
-                tag="h2"
-                className="text-3xl sm:text-4xl"
-              />
-              <p className="mt-2 max-w-xl text-muted-foreground">
-                {sectionSubtitle(
-                  section,
-                  'Piezas tejidas a mano, en stock o fabricadas bajo pedido.',
-                )}
-              </p>
-            </div>
-          </header>
-          <CatalogBody
-            filter={filter}
-            setFilter={setFilter}
-            filtered={filtered}
-            openDetail={openDetail}
-            handleAdd={handleAdd}
-            selected={selected}
-            setSelected={setSelected}
+          <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+            <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+              <div className={sectionAlignClass(align)} style={sectionTextAlignStyle(align)}>
+                <TypingTitle
+                  text={sectionTitle(section, 'Nuestros productos')}
+                  tag="h2"
+                  className="text-3xl sm:text-4xl"
+                />
+                <p className="mt-2 max-w-xl text-muted-foreground">
+                  {sectionSubtitle(
+                    section,
+                    'Piezas tejidas a mano, en stock o fabricadas bajo pedido.',
+                  )}
+                </p>
+              </div>
+            </header>
+            <CatalogBody
+              filter={filter}
+              setFilter={setFilter}
+              filtered={filtered}
+              openDetail={openDetail}
+              handleAdd={handleAdd}
+              selected={selected}
+              setSelected={setSelected}
             gallery={gallery}
             galleryIndex={galleryIndex}
             setGalleryIndex={setGalleryIndex}
@@ -157,6 +166,7 @@ function ProductCatalogInner({ products: seed, section }: Props) {
             mainImage={mainImage}
             meta={meta}
           />
+          </div>
         </>
       )}
     </section>

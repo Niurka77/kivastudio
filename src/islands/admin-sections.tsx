@@ -9,14 +9,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { fetchSections, updateSection } from '@/lib/api/sections';
 import { uploadImage } from '@/lib/api/products';
 import { useAdminRole } from '@/lib/auth/admin-status';
-import { SECTION_LABELS } from '@/lib/sections';
-import type { SectionKey } from '@/types';
+import { DEFAULT_SECTION_ALIGN, SECTION_LABELS } from '@/lib/sections';
+import type { SectionKey, TextAlign } from '@/types';
 
 /**
  * Panel de secciones de la portada (solo la dueña).
- * Permite editar, sin tocar código, el título y el fondo (textura/imagen) de
- * cada sección de la página de inicio, y mostrar u ocultar secciones.
+ * Permite editar, sin tocar código, el título, el fondo (textura/imagen), la
+ * alineación del texto y las decoraciones (imágenes izquierda/derecha) de cada
+ * sección de la página de inicio, y mostrar u ocultar secciones.
  */
+
+const ALIGN_OPTIONS: { id: TextAlign; label: string }[] = [
+  { id: 'left', label: 'Izquierda' },
+  { id: 'center', label: 'Centro' },
+  { id: 'right', label: 'Derecha' },
+];
 
 function AdminSectionsInner() {
   const queryClient = useQueryClient();
@@ -27,10 +34,17 @@ function AdminSectionsInner() {
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [backgroundUrl, setBackgroundUrl] = useState('');
+  const [textAlign, setTextAlign] = useState<TextAlign>('left');
+  const [decorationLeft, setDecorationLeft] = useState('');
+  const [decorationRight, setDecorationRight] = useState('');
   const [active, setActive] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingLeft, setUploadingLeft] = useState(false);
+  const [uploadingRight, setUploadingRight] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const leftInputRef = useRef<HTMLInputElement>(null);
+  const rightInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-sections'],
@@ -45,6 +59,9 @@ function AdminSectionsInner() {
     setTitle(found?.title ?? '');
     setSubtitle(found?.subtitle ?? '');
     setBackgroundUrl(found?.backgroundUrl ?? '');
+    setTextAlign(found?.textAlign ?? DEFAULT_SECTION_ALIGN[key]);
+    setDecorationLeft(found?.decorationLeft ?? '');
+    setDecorationRight(found?.decorationRight ?? '');
     setActive(found?.active ?? true);
     setError(null);
   };
@@ -55,6 +72,9 @@ function AdminSectionsInner() {
         title: title || null,
         subtitle: subtitle || null,
         backgroundUrl: backgroundUrl || null,
+        textAlign,
+        decorationLeft: decorationLeft || null,
+        decorationRight: decorationRight || null,
         active,
       }),
     onSuccess: () => {
@@ -75,6 +95,28 @@ function AdminSectionsInner() {
       setError(err instanceof Error ? err.message : 'No se pudo subir la textura');
     } finally {
       setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleUploadDecor = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    side: 'left' | 'right',
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (side === 'left') setUploadingLeft(true);
+    else setUploadingRight(true);
+    setError(null);
+    try {
+      const { url } = await uploadImage(file, 'sections');
+      if (side === 'left') setDecorationLeft(url);
+      else setDecorationRight(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo subir la decoración');
+    } finally {
+      if (side === 'left') setUploadingLeft(false);
+      else setUploadingRight(false);
       e.target.value = '';
     }
   };
@@ -107,8 +149,8 @@ function AdminSectionsInner() {
           Secciones de la portada
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Cambia el título y el fondo (textura) de cada sección sin tocar código.
-          Elige una sección, edita y guarda.
+          Cambia el título, el fondo (textura), la alineación y las decoraciones de
+          cada sección sin tocar código. Elige una sección, edita y guarda.
         </p>
       </header>
 
@@ -246,6 +288,131 @@ function AdminSectionsInner() {
               </p>
             </div>
 
+            <div className="space-y-1.5">
+              <Label>Alineación del texto</Label>
+              <div className="flex flex-wrap gap-2">
+                {ALIGN_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setTextAlign(opt.id)}
+                    className={[
+                      'rounded-lg border px-4 py-2 text-sm font-semibold transition-colors',
+                      textAlign === opt.id
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-primary-strong',
+                    ].join(' ')}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Cómo se alinea el título y el texto de esta sección.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Label>Decoraciones laterales (opcional)</Label>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <span className="text-sm font-medium text-foreground">Izquierda</span>
+                  <div className="flex items-center gap-2">
+                    {decorationLeft ? (
+                      <img
+                        src={decorationLeft}
+                        alt="Decoración izquierda"
+                        className="h-14 w-14 rounded-md border border-border object-contain"
+                      />
+                    ) : (
+                      <div className="flex h-14 w-14 items-center justify-center rounded-md border border-dashed border-border text-xs text-muted-foreground">
+                        Sin
+                      </div>
+                    )}
+                    <input
+                      ref={leftInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                      className="hidden"
+                      onChange={(e) => handleUploadDecor(e, 'left')}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="gap-2"
+                      disabled={uploadingLeft}
+                      onClick={() => leftInputRef.current?.click()}
+                    >
+                      {uploadingLeft ? (
+                        <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                      ) : (
+                        <ImagePlus className="size-4" aria-hidden="true" />
+                      )}
+                      {uploadingLeft ? 'Subiendo…' : 'Subir'}
+                    </Button>
+                    {decorationLeft && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => setDecorationLeft('')}
+                      >
+                        Quitar
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <span className="text-sm font-medium text-foreground">Derecha</span>
+                  <div className="flex items-center gap-2">
+                    {decorationRight ? (
+                      <img
+                        src={decorationRight}
+                        alt="Decoración derecha"
+                        className="h-14 w-14 rounded-md border border-border object-contain"
+                      />
+                    ) : (
+                      <div className="flex h-14 w-14 items-center justify-center rounded-md border border-dashed border-border text-xs text-muted-foreground">
+                        Sin
+                      </div>
+                    )}
+                    <input
+                      ref={rightInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                      className="hidden"
+                      onChange={(e) => handleUploadDecor(e, 'right')}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="gap-2"
+                      disabled={uploadingRight}
+                      onClick={() => rightInputRef.current?.click()}
+                    >
+                      {uploadingRight ? (
+                        <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                      ) : (
+                        <ImagePlus className="size-4" aria-hidden="true" />
+                      )}
+                      {uploadingRight ? 'Subiendo…' : 'Subir'}
+                    </Button>
+                    {decorationRight && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => setDecorationRight('')}
+                      >
+                        Quitar
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Imágenes pequeñas que se muestran a los lados de la sección · hasta 5 MB cada una.
+              </p>
+            </div>
+
             <label className="flex items-center gap-2 text-sm font-medium">
               <input
                 type="checkbox"
@@ -275,7 +442,7 @@ function AdminSectionsInner() {
           <p className="text-xs text-muted-foreground">
             {selected && !selected.title && !selected.subtitle && !selected.backgroundUrl
               ? 'Esta sección todavía usa el texto y el fondo originales de la página.'
-              : 'Consejo: sube texturas suaves para que el texto se siga leyendo bien.'}
+              : 'Consejo: sube texturas suaves y decoraciones pequeñas para que el texto se siga leyendo bien.'}
           </p>
         </>
       )}

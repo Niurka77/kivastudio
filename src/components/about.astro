@@ -1,8 +1,11 @@
 ---
 import Logo from '@/components/Logo.astro';
 import TypingTitle from '@/islands/TypingTitle';
+import SectionDecor from '@/components/SectionDecor.astro';
 import {
   hasSectionBg,
+  sectionAlign,
+  sectionAlignClass,
   sectionBgCss,
   sectionSubtitle,
   sectionTitle,
@@ -14,23 +17,25 @@ interface Props {
 }
 
 const { section } = Astro.props;
+const align = sectionAlign(section);
 ---
 
 <section
   id="nosotros"
-  class:list={['bg-secondary', hasSectionBg(section?.backgroundUrl) && 'relative']}
+  class="relative overflow-hidden bg-secondary"
   style={sectionBgCss(section?.backgroundUrl)}
 >
   {hasSectionBg(section?.backgroundUrl) && (
-    <div class="absolute inset-0 bg-background/60" aria-hidden="true" />
+    <div class="absolute inset-0 z-0 bg-background/60" aria-hidden="true" />
   )}
-  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
+  <SectionDecor left={section?.decorationLeft} right={section?.decorationRight} />
+  <div class="relative z-10 mx-auto max-w-6xl px-4 py-20 sm:px-6">
     <div class="grid items-center gap-10 md:grid-cols-[1fr_1.2fr]">
       <div class="flex justify-center md:justify-start">
         <Logo className="h-44 w-auto" />
       </div>
 
-      <div>
+      <div class={sectionAlignClass(align)}>
         <TypingTitle
           client:visible
           text={sectionTitle(section, 'Hecho con el corazón')}

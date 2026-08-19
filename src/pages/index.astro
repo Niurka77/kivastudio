@@ -34,6 +34,9 @@ for (const row of sectionRows ?? []) {
     title: row.title,
     subtitle: row.subtitle,
     backgroundUrl: row.background_url,
+    textAlign: (row.text_align as SiteSection['textAlign']) ?? null,
+    decorationLeft: row.decoration_left,
+    decorationRight: row.decoration_right,
     active: row.active,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -50,6 +53,8 @@ const aboutSection = sections['about'];
 const testimonialsSection = sections['testimonials'];
 const instagramSection = sections['instagram'];
 const contactSection = sections['contact'];
+const faqSection = sections['faq'];
+const footerSection = sections['footer'];
 ---
 
 <Layout
@@ -75,10 +80,10 @@ const contactSection = sections['contact'];
 
     <InstagramSection section={instagramSection} />
 
-    <Faq />
+    <Faq section={faqSection} />
 
     <Contact section={contactSection} />
   </main>
 
-  <Footer />
+  <Footer section={footerSection} />
 </Layout>

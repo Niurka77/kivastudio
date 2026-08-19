@@ -1,0 +1,28 @@
+---
+interface Props {
+  left?: string | null;
+  right?: string | null;
+}
+
+const { left, right } = Astro.props;
+---
+
+<!-- Decoraciones laterales de una sección (se colocan sobre la textura,
+     detrás del contenido). El contenedor de la sección debe ser `relative
+     overflow-hidden`. -->
+{left && (
+  <img
+    src={left}
+    alt=""
+    aria-hidden="true"
+    class="pointer-events-none absolute left-4 top-1/2 z-0 w-20 -translate-y-1/2 select-none opacity-90 sm:left-8 sm:w-32"
+  />
+)}
+{right && (
+  <img
+    src={right}
+    alt=""
+    aria-hidden="true"
+    class="pointer-events-none absolute right-4 top-1/2 z-0 w-20 -translate-y-1/2 select-none opacity-90 sm:right-8 sm:w-32"
+  />
+)}
