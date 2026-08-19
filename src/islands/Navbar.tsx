@@ -3,6 +3,7 @@ import { Menu, X, MessageCircle } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { CartIcon } from '@/components/cart-icon';
+import ThemeToggle from '@/islands/ThemeToggle';
 import { waLink } from '@/lib/whatsapp';
 import { useCartStore } from '@/stores/cart';
 
@@ -83,6 +84,8 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
+
           <a
             href={waLink('Hola Kiva Studio, quisiera hacer un pedido.')}
             target="_blank"

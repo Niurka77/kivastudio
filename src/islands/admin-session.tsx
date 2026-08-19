@@ -28,11 +28,13 @@ export default function AdminSession() {
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-3 rounded-[16px] border border-border bg-secondary/50 p-3">
       {identity && (
-        <div className="hidden text-right sm:block">
-          <p className="text-sm font-semibold text-foreground">{identity.name}</p>
-          <p className="text-xs text-muted-foreground">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-foreground">
+            {identity.name}
+          </p>
+          <p className="truncate text-xs text-muted-foreground">
             {identity.email} · {ROLE_LABEL[identity.role]}
           </p>
         </div>
@@ -40,7 +42,7 @@ export default function AdminSession() {
       <Button
         variant="outline"
         size="sm"
-        className="gap-2"
+        className="w-full gap-2"
         onClick={handleClick}
         disabled={loading}
       >

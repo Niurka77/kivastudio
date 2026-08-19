@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { adminCan, getAdminUser } from '@/lib/auth/server-auth';
 import { createVideoSchema } from '@/schemas/video';
+import { notifyNewVideo } from '@/lib/notify';
 import type { Video } from '@/types';
 
 /**
@@ -92,5 +93,9 @@ export const POST: APIRoute = async ({ request }) => {
   if (error) {
     return json({ message: error.message }, 500);
   }
+
+  // Avisa a la dueña por correo (no bloquea la respuesta).
+  void notifyNewVideo({ title: d.title });
+
   return json(mapRow(data), 201);
 };

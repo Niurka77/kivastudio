@@ -7,6 +7,7 @@ interface Props {
   description?: string;
   image?: string;
   type?: string;
+  url?: string;
 }
 
 const {
@@ -14,21 +15,35 @@ const {
   description = 'Estudio artesanal de crochet: amigurumi, bolsos y accesorios tejidos a mano en Perú. Pedidos personalizados por WhatsApp.',
   image = `${env.siteUrl}/logo.webp`,
   type = 'website',
+  url,
 } = Astro.props;
 const siteTitle = 'Kiva Studio';
 const siteUrl = env.siteUrl;
 const fullTitle = title == null ? siteTitle : `${title} · ${siteTitle}`;
+const canonical = url ?? siteUrl;
 ---
 
 <!doctype html>
 <html lang="es">
   <head>
+    <script is:inline>
+      /* Aplica el tema oscuro antes del primer pintado para evitar parpadeo. */
+      (function () {
+        try {
+          var saved = localStorage.getItem('kiva-theme');
+          var dark = saved
+            ? saved === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={siteUrl} />
+    <link rel="canonical" href={canonical} />
 
     <!-- Open Graph (vista previa en WhatsApp, Instagram, Facebook) -->
     <meta property="og:type" content={type} />
@@ -36,7 +51,7 @@ const fullTitle = title == null ? siteTitle : `${title} · ${siteTitle}`;
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
-    <meta property="og:url" content={siteUrl} />
+    <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />

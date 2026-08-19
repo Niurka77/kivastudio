@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { getAdminUser } from '@/lib/auth/server-auth';
 import { createOrderSchema } from '@/schemas/order';
+import { notifyNewOrder } from '@/lib/notify';
 import type { Order } from '@/types';
 
 /**
@@ -75,6 +76,14 @@ export const POST: APIRoute = async ({ request }) => {
   if (error) {
     return json({ message: error.message }, 500);
   }
+
+  // Avisa a la dueña por correo (no bloquea la respuesta).
+  void notifyNewOrder({
+    customerName: d.customerName ?? null,
+    items: d.items.map((i) => ({ name: i.name, quantity: i.quantity })),
+    subtotal: d.subtotal,
+  });
+
   return json(mapRow(data), 201);
 };
 

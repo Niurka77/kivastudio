@@ -1,5 +1,5 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
-import { Check, MessageCircle, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { Check, MessageCircle, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -299,6 +299,13 @@ function CatalogBody({
                       <ShoppingBag className="size-4" aria-hidden="true" />
                     </Button>
                   </div>
+                  <a
+                    href={`/productos/${product.slug}`}
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary-strong transition-colors hover:text-primary"
+                  >
+                    Ver ficha completa
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                  </a>
                 </CardContent>
               </Card>
             </li>

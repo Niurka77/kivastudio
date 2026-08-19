@@ -1,0 +1,168 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Navbar from '@/islands/Navbar';
+import Footer from '@/components/footer.astro';
+import CartDrawer from '@/components/cart-drawer';
+import ProductGallery from '@/islands/ProductGallery';
+import ProductBuy from '@/islands/ProductBuy';
+import { Badge } from '@/components/ui/badge';
+import { getSupabaseServiceClient } from '@/lib/supabase/server';
+import { getCategoryLabel } from '@/lib/categories';
+import { AVAILABILITY_META } from '@/lib/availability';
+import { formatPrice } from '@/lib/price';
+import { env } from '@/lib/env';
+import type { Product } from '@/types';
+
+export const prerender = false;
+
+const slug = Astro.params.slug;
+
+const { data: row, error: productError } = await getSupabaseServiceClient()
+  .from('products')
+  .select('*')
+  .eq('slug', slug)
+  .eq('active', true)
+  .maybeSingle();
+
+let product: Product | null = null;
+if (!productError && row) {
+  product = {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    description: row.description,
+    price: Number(row.price),
+    currency: row.currency,
+    availability: row.availability,
+    leadTime: row.lead_time,
+    categoryId: row.category_id,
+    imageUrl: row.image_url,
+    gallery: Array.isArray(row.gallery) ? row.gallery : null,
+    active: row.active,
+  };
+}
+
+if (!product) {
+  Astro.response.status = 404;
+}
+
+const abs = (url: string | null | undefined) =>
+  url ? `${env.siteUrl}${url.startsWith('http') ? '' : '/'}${url.replace(/^\//, '')}` : null;
+---
+
+{product && (
+  <Layout
+    title={product.name}
+    description={product.description ?? `${product.name} · pieza tejida a mano por Kiva Studio.`}
+    image={abs(product.imageUrl) ?? `${env.siteUrl}/logo.webp`}
+    url={`${env.siteUrl}/productos/${product.slug}`}
+  >
+    <Navbar client:load />
+    <CartDrawer client:load />
+
+    <main class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <nav aria-label="Miga de pan" class="mb-6 text-sm text-muted-foreground">
+        <a href="/" class="hover:text-primary-strong">Inicio</a>
+        <span aria-hidden="true"> / </span>
+        <a href="/#productos" class="hover:text-primary-strong">Productos</a>
+        <span aria-hidden="true"> / </span>
+        <span class="text-foreground">{product.name}</span>
+      </nav>
+
+      <div class="grid gap-10 md:grid-cols-2">
+        <ProductGallery
+          client:load
+          images={product.gallery?.length ? product.gallery : product.imageUrl ? [product.imageUrl] : []}
+          alt={product.name}
+        />
+
+        <div class="flex flex-col">
+          <div class="flex flex-wrap items-center gap-2">
+            <Badge variant={AVAILABILITY_META[product.availability].variant}>
+              {AVAILABILITY_META[product.availability].label}
+            </Badge>
+            <Badge variant="secondary">{getCategoryLabel(product.categoryId)}</Badge>
+          </div>
+
+          <h1 class="mt-4 font-heading text-3xl font-bold text-foreground sm:text-4xl">
+            {product.name}
+          </h1>
+
+          <div class="mt-4">
+            <span class="font-heading text-3xl font-bold text-primary-strong">
+              {formatPrice(product.price)}
+            </span>
+            {product.availability === 'made_to_order' && product.leadTime != null && (
+              <p class="mt-1 text-sm text-muted-foreground">
+                Fabricación bajo pedido · listo en ~{product.leadTime} días
+              </p>
+            )}
+          </div>
+
+          {product.description && (
+            <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+              {product.description}
+            </p>
+          )}
+
+          <div class="mt-8">
+            <ProductBuy client:load product={product} />
+          </div>
+
+          <div class="mt-8 rounded-[20px] border border-border bg-secondary/50 p-5 text-sm text-muted-foreground">
+            <p class="font-semibold text-foreground">Hecho a mano, con amor</p>
+            <p class="mt-1">
+              Cada pieza de Kiva Studio se teje a mano. Los colores y acabados pueden
+              variar ligeramente de las fotos: eso la hace única. ¿Quieres otra
+              combinación de colores o un nombre? Escríbenos para personalizarla.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <Footer />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.name,
+      description: product.description ?? undefined,
+      image: product.gallery?.length
+        ? product.gallery.map((g) => abs(g)).filter(Boolean)
+        : [abs(product.imageUrl) ?? `${env.siteUrl}/logo.webp`],
+      offers: {
+        '@type': 'Offer',
+        price: product.price,
+        priceCurrency: 'PEN',
+        availability:
+          product.availability === 'in_stock'
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/MadeToOrder',
+      },
+      brand: { '@type': 'Brand', name: 'Kiva Studio' },
+    })} />
+  </Layout>
+)}
+
+{!product && (
+  <Layout title="Producto no encontrado">
+    <Navbar client:load />
+    <main class="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center sm:px-6">
+      <h1 class="font-heading text-3xl font-bold text-foreground">
+        Producto no encontrado
+      </h1>
+      <p class="mt-3 text-muted-foreground">
+        Es posible que la pieza ya no esté disponible o que la dirección sea
+        incorrecta.
+      </p>
+      <a
+        href="/#productos"
+        class="mt-8 inline-flex h-11 items-center justify-center rounded-[16px] bg-primary px-6 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02]"
+      >
+        Ver el catálogo
+      </a>
+    </main>
+    <Footer />
+  </Layout>
+)}

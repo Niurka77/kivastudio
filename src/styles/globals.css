@@ -1,6 +1,11 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Modo oscuro por clase: `.dark` en <html> (tema guardado / preferencia del SO).
+   Las utilidades de color referencian var(--background), var(--foreground), etc.,
+   así que al sobreescribir esas variables en `.dark` todo el sitio cambia. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Tipografías self-hosted (@fontsource) para evitar CLS y dependencia externa.
    Outfit 700 = títulos; Quicksand 500 = texto (DESIGN_SYSTEM). */
 @import '@fontsource/outfit/700.css';
@@ -24,7 +29,7 @@
   DESIGN SYSTEM — Marca de crochet (DESIGN_SYSTEM.md)
   Convertido a tokens CSS-first de Tailwind v4.
 
-  Paleta oficial:
+  Paleta oficial (claro):
   - Fondo principal        #FFFFFF
   - Fondo secundario       #FDF5F9
   - Texto                  #1B1A1C
@@ -32,44 +37,114 @@
   - Rosa suave             #E8C7E1 (fondos suaves, tarjetas, etiquetas)
   - Color secundario       #F77924 (solo promociones/descuentos/avisos)
 
+  Paleta oscura (`.dark`): tonos ciruela cálidos que mantienen la marca rosa.
+
   Accesibilidad (ADR B.1): el texto de marca usa `primary-foreground` sobre las
   superficies adecuadas y una variante oscura (`primary-strong`) para cumplir
   WCAG AA cuando el rosa principal se usa como color de texto en fondo claro.
+  En oscuro, `primary-strong` es un rosa claro para mantener el contraste.
 */
+
+:root {
+  /* Fondo / superficies */
+  --background: #ffffff;
+  --foreground: #1b1a1c;
+
+  --card: #ffffff;
+  --card-foreground: #1b1a1c;
+
+  --popover: #ffffff;
+  --popover-foreground: #1b1a1c;
+
+  --secondary: #fdf5f9;
+  --secondary-foreground: #1b1a1c;
+
+  --muted: #f8e9f1;
+  --muted-foreground: #6b5f66;
+
+  /* Marca */
+  --primary: #f25f9d;
+  --primary-foreground: #ffffff;
+  --primary-strong: #be185d; /* texto interactivo en fondo claro (WCAG AA) */
+  --primary-soft: #e8c7e1; /* rosa suave: superficies, tarjetas, etiquetas */
+
+  --accent: #f77924; /* solo promociones / descuentos / avisos */
+  --accent-foreground: #ffffff;
+
+  /* Estados de acción */
+  --destructive: #e11d48;
+  --destructive-foreground: #ffffff;
+
+  --border: #f3dfea;
+  --input: #f3dfea;
+  --ring: #f25f9d;
+}
+
+.dark {
+  --background: #151013;
+  --foreground: #f6f0f3;
+
+  --card: #1d171b;
+  --card-foreground: #f6f0f3;
+
+  --popover: #1d171b;
+  --popover-foreground: #f6f0f3;
+
+  --secondary: #241a20;
+  --secondary-foreground: #f6f0f3;
+
+  --muted: #2c2128;
+  --muted-foreground: #b9a8b1;
+
+  --primary: #f25f9d;
+  --primary-foreground: #ffffff;
+  --primary-strong: #f9a3c6; /* rosa claro legible sobre fondo oscuro (WCAG AA) */
+  --primary-soft: #3d2633; /* rosa suave oscuro: superficies, chips */
+
+  --accent: #f77924;
+  --accent-foreground: #ffffff;
+
+  --destructive: #fb7185;
+  --destructive-foreground: #2a0a12;
+
+  --border: #37282f;
+  --input: #37282f;
+  --ring: #f25f9d;
+}
 
 @theme inline {
   /* Fondo / superficies */
-  --color-background: #ffffff;
-  --color-foreground: #1b1a1c;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
-  --color-card: #ffffff;
-  --color-card-foreground: #1b1a1c;
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
 
-  --color-popover: #ffffff;
-  --color-popover-foreground: #1b1a1c;
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
 
-  --color-secondary: #fdf5f9;
-  --color-secondary-foreground: #1b1a1c;
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
 
-  --color-muted: #f8e9f1;
-  --color-muted-foreground: #6b5f66;
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
 
   /* Marca */
-  --color-primary: #f25f9d;
-  --color-primary-foreground: #ffffff;
-  --color-primary-strong: #be185d; /* texto interactivo en fondo claro (WCAG AA) */
-  --color-primary-soft: #e8c7e1; /* rosa suave: superficies, tarjetas, etiquetas */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-soft: var(--primary-soft);
 
-  --color-accent: #f77924; /* solo promociones / descuentos / avisos */
-  --color-accent-foreground: #ffffff;
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
   /* Estados de acción */
-  --color-destructive: #e11d48;
-  --color-destructive-foreground: #ffffff;
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
 
-  --color-border: #f3dfea;
-  --color-input: #f3dfea;
-  --color-ring: #f25f9d;
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
   /* Radios (DESIGN_SYSTEM: botones/inputs 16, cards 20, imágenes 24) */
   --radius-sm: 0.75rem; /* 12 */
