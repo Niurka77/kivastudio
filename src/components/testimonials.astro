@@ -1,17 +1,36 @@
 ---
 import TestimonialsSection from '@/islands/testimonials-section';
 import TypingTitle from '@/islands/TypingTitle';
+import {
+  hasSectionBg,
+  sectionBgCss,
+  sectionTitle,
+} from '@/lib/sections';
+import type { SiteSection } from '@/types';
+
+interface Props {
+  section?: SiteSection;
+}
+
+const { section } = Astro.props;
 ---
 
-<section id="testimonios" class="bg-secondary">
-  <div class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+<section
+  id="testimonios"
+  class:list={['bg-secondary', hasSectionBg(section?.backgroundUrl) && 'relative']}
+  style={sectionBgCss(section?.backgroundUrl)}
+>
+  {hasSectionBg(section?.backgroundUrl) && (
+    <div class="absolute inset-0 bg-background/60" aria-hidden="true" />
+  )}
+  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
     <header class="text-center">
       <p class="text-sm font-semibold uppercase tracking-wider text-primary-strong">
         Testimonios
       </p>
       <TypingTitle
         client:visible
-        text="Clientes que lo recibieron con una sonrisa"
+        text={sectionTitle(section, 'Clientes que lo recibieron con una sonrisa')}
         tag="h2"
         className="mx-auto max-w-3xl text-3xl sm:text-4xl"
       />

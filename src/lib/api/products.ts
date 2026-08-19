@@ -70,10 +70,10 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
   return res.json() as Promise<Product>;
 }
 
-/** Sube una imagen al bucket público y devuelve su URL. */
+/** Sube un archivo al bucket público y devuelve su URL. */
 export async function uploadImage(
   file: File,
-  folder: 'products' | 'posts' = 'products',
+  folder: 'products' | 'posts' | 'videos' | 'sections' = 'products',
 ): Promise<{ url: string }> {
   const token = await getAccessToken();
   const form = new FormData();

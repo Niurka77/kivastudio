@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
-import { getAdminUser } from '@/lib/auth/server-auth';
+import { adminCan, getAdminUser } from '@/lib/auth/server-auth';
 import { createProductSchema } from '@/schemas/product';
 import type { Product } from '@/types';
 
@@ -67,7 +67,7 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   const admin = await getAdminUser(request);
-  if (!admin) {
+  if (!adminCan(admin, 'products', 'editor')) {
     return json({ message: 'No autorizado: se requiere iniciar sesión como admin' }, 401);
   }
 

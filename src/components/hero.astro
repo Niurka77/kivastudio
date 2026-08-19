@@ -4,11 +4,31 @@ import TypingTitle from '@/islands/TypingTitle';
 import ProtectedImage from '@/islands/ProtectedImage';
 import { Button } from '@/components/ui/button';
 import { waLink, WHATSAPP_DISPLAY } from '@/lib/whatsapp';
+import {
+  hasSectionBg,
+  sectionBgCss,
+  sectionSubtitle,
+  sectionTitle,
+} from '@/lib/sections';
+import type { SiteSection } from '@/types';
+
+interface Props {
+  section?: SiteSection;
+}
+
+const { section } = Astro.props;
 ---
 
-<section id="inicio" class="overflow-hidden bg-secondary">
+<section
+  id="inicio"
+  class:list={['overflow-hidden bg-secondary', hasSectionBg(section?.backgroundUrl) && 'relative']}
+  style={sectionBgCss(section?.backgroundUrl)}
+>
+  {hasSectionBg(section?.backgroundUrl) && (
+    <div class="absolute inset-0 bg-background/60" aria-hidden="true" />
+  )}
   <div
-    class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:py-24"
+    class="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:items-center md:py-24"
   >
     <Reveal client:load y={24}>
       <span
@@ -18,13 +38,15 @@ import { waLink, WHATSAPP_DISPLAY } from '@/lib/whatsapp';
       </span>
       <TypingTitle
         client:load
-        text="Piezas tejidas a mano, con amor"
+        text={sectionTitle(section, 'Piezas tejidas a mano, con amor')}
         accentFrom={23}
         className="mt-5 text-4xl sm:text-5xl"
       />
       <p class="mt-4 max-w-md text-lg text-muted-foreground">
-        Muñecos amigurumi, accesorios y decoración únicos creados en Kiva Studio. Cada
-        pieza lleva tiempo, dedicación y un toque personal.
+        {sectionSubtitle(
+          section,
+          'Muñecos amigurumi, accesorios y decoración únicos creados en Kiva Studio. Cada pieza lleva tiempo, dedicación y un toque personal.',
+        )}
       </p>
       <div class="mt-8 flex flex-wrap items-center gap-3">
         <a href="#productos">

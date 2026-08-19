@@ -10,7 +10,45 @@ import InstagramSection from '@/components/instagram-section.astro';
 import ProductCatalog from '@/islands/product-catalog';
 import CartDrawer from '@/components/cart-drawer';
 import WelcomeVideo from '@/islands/WelcomeVideo';
+import VideosSection from '@/islands/VideosSection';
+import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { PRODUCTS } from '@/data/products';
+import type { SectionKey, SiteSection } from '@/types';
+
+export const prerender = false;
+
+const supabase = getSupabaseServiceClient();
+const { data: sectionRows } = await supabase
+  .from('sections')
+  .select('*')
+  .eq('active', true)
+  .order('key', { ascending: true });
+
+const sections: Partial<Record<SectionKey, SiteSection>> = {};
+for (const row of sectionRows ?? []) {
+  const key = row.key as SectionKey;
+  sections[key] = {
+    id: row.id,
+    key,
+    title: row.title,
+    subtitle: row.subtitle,
+    backgroundUrl: row.background_url,
+    active: row.active,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+// Si aún no existe la tabla de secciones (migración 0005 pendiente), la portada
+// sigue funcionando con los textos por defecto.
+const heroSection = sections['hero'];
+const welcomeSection = sections['welcome'];
+const videosSection = sections['videos'];
+const productsSection = sections['products'];
+const aboutSection = sections['about'];
+const testimonialsSection = sections['testimonials'];
+const instagramSection = sections['instagram'];
+const contactSection = sections['contact'];
 ---
 
 <Layout
@@ -22,19 +60,21 @@ import { PRODUCTS } from '@/data/products';
   <CartDrawer client:load />
 
   <main>
-    <Hero />
+    <Hero section={heroSection} />
 
-    <WelcomeVideo client:load />
+    <WelcomeVideo client:load section={welcomeSection} />
 
-    <ProductCatalog client:load products={PRODUCTS} />
+    <VideosSection client:load section={videosSection} />
 
-    <About />
+    <ProductCatalog client:load products={PRODUCTS} section={productsSection} />
 
-    <Testimonials />
+    <About section={aboutSection} />
 
-    <InstagramSection />
+    <Testimonials section={testimonialsSection} />
 
-    <Contact />
+    <InstagramSection section={instagramSection} />
+
+    <Contact section={contactSection} />
   </main>
 
   <Footer />

@@ -3,6 +3,13 @@ import { CircleAlert, LoaderCircle, Pause, Play } from 'lucide-react';
 import TypingTitle from '@/islands/TypingTitle';
 import { cn } from '@/lib/utils';
 import { useProtectedMedia } from '@/lib/useProtectedMedia';
+import {
+  hasSectionBg,
+  sectionBgStyle,
+  sectionSubtitle,
+  sectionTitle,
+} from '@/lib/sections';
+import type { SiteSection } from '@/types';
 
 /**
  * Sección de bienvenida de la página de inicio.
@@ -12,7 +19,7 @@ import { useProtectedMedia } from '@/lib/useProtectedMedia';
  * y se carga como Blob (URL `blob:`), sin botón de descarga en los controles,
  * sin Picture-in-Picture y bloqueando el menú contextual del reproductor.
  */
-export default function WelcomeVideo() {
+export default function WelcomeVideo({ section }: { section?: SiteSection }) {
   const containerRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [inView, setInView] = useState(false);
@@ -53,27 +60,32 @@ export default function WelcomeVideo() {
   };
 
   const ready = status === 'ready' && url !== null;
+  const bg = hasSectionBg(section?.backgroundUrl);
 
   return (
     <section
       ref={containerRef}
       id="bienvenida"
       aria-label="Video de bienvenida de Kiva Studio"
-      className="bg-background"
+      className={cn('bg-background', bg && 'relative')}
+      style={sectionBgStyle(section?.backgroundUrl)}
     >
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      {bg && <div className="absolute inset-0 bg-background/60" aria-hidden="true" />}
+      <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary-soft/60 px-4 py-1.5 text-sm font-semibold text-primary-strong">
             Conócenos · Bienvenida
           </span>
           <TypingTitle
-            text="Te damos la bienvenida"
+            text={sectionTitle(section, 'Te damos la bienvenida')}
             tag="h2"
             className="mt-5 text-3xl sm:text-4xl"
           />
           <p className="mt-4 text-lg text-muted-foreground">
-            La artesana detrás de Kiva Studio es un poco penosa, así que en vez de hablar
-            mucho, te deja este video de bienvenida tejido con el corazón.
+            {sectionSubtitle(
+              section,
+              'La artesana detrás de Kiva Studio es un poco penosa, así que en vez de hablar mucho, te deja este video de bienvenida tejido con el corazón.',
+            )}
           </p>
         </div>
 

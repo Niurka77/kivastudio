@@ -1,0 +1,11 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import AdminGate from '@/components/admin-gate';
+import AdminVideos from '@/islands/admin-videos';
+---
+
+<AdminLayout title="Videos · Admin" active="videos">
+  <AdminGate client:load>
+    <AdminVideos client:load />
+  </AdminGate>
+</AdminLayout>

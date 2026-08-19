@@ -1,24 +1,15 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import AdminSession from '@/islands/admin-session';
+import AdminNav from '@/islands/admin-nav';
 import Logo from '@/components/Logo.astro';
 
 interface Props {
   title: string;
-  active?: 'dashboard' | 'orders' | 'new' | 'reviews' | 'posts';
+  active?: string;
 }
 
 const { title, active } = Astro.props;
-
-const links = [
-  { href: '/admin', id: 'dashboard', label: 'Panel' },
-  { href: '/admin/pedidos', id: 'orders', label: 'Pedidos' },
-  { href: '/admin/resenas', id: 'reviews', label: 'Reseñas' },
-  { href: '/admin/novedades', id: 'posts', label: 'Novedades' },
-  { href: '/admin/nuevo', id: 'new', label: 'Nuevo producto' },
-] as const;
-
-const activeSet = new Set([active]);
 ---
 
 <Layout title={title}>
@@ -31,27 +22,7 @@ const activeSet = new Set([active]);
           </a>
         </div>
 
-        <nav class="mt-2 flex items-center gap-1 overflow-x-auto px-5 pb-3 lg:mt-8 lg:flex-col lg:items-stretch lg:gap-1 lg:overflow-visible lg:px-0 lg:pb-0">
-          {links.map((l) => (
-            <a
-              href={l.href}
-              class:list={[
-                'whitespace-nowrap rounded-[12px] px-3 py-2 text-sm font-semibold transition-colors',
-                activeSet.has(l.id)
-                  ? 'bg-primary/10 text-primary-strong'
-                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
-              ]}
-            >
-              {l.label}
-            </a>
-          ))}
-          <a
-            href="/"
-            class="whitespace-nowrap rounded-[12px] px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-          >
-            Ver tienda
-          </a>
-        </nav>
+        <AdminNav client:load active={active} />
 
         <div class="mt-4 hidden px-0 lg:block">
           <AdminSession client:load />

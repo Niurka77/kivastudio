@@ -16,9 +16,9 @@ export default defineConfig({
   adapter: vercel({
     imageService: true,
     webAnalytics: { enabled: false },
-    // Los medios privados (video de bienvenida y foto de la artesana) se sirven
-    // vía /api/media; se incluyen en el bundle del Serverless Function.
-    includeFiles: ['private-media/welcome.mp4', 'private-media/artesana.webp'],
+    // Los medios privados viven en Vercel Blob (store privado) y se sirven vía
+    // /api/media. Ya NO se incluyen en el bundle, para que el build de Git
+    // (que clona el repo, sin private-media/) funcione igual que el local.
   }),
   image: {
     // Formatos modernos con fallback: AVIF/WebP (ver 02_PROJECT_ARCHITECTURE.md §16.3)

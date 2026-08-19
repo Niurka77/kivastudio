@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import { Check, MessageCircle, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,8 @@ import { formatPrice } from '@/lib/price';
 import { fetchProducts } from '@/lib/api/products';
 import { useCartStore } from '@/stores/cart';
 import { waLink } from '@/lib/whatsapp';
-import type { Product } from '@/types';
+import { sectionBgStyle, sectionSubtitle, sectionTitle } from '@/lib/sections';
+import type { Product, SiteSection } from '@/types';
 
 /**
  * Catálogo interactivo (CLIENT STATE + SERVER STATE).
@@ -29,11 +30,12 @@ import type { Product } from '@/types';
  */
 interface Props {
   products: Product[];
+  section?: SiteSection;
 }
 
 type Filter = 'all' | string;
 
-function ProductCatalogInner({ products: seed }: Props) {
+function ProductCatalogInner({ products: seed, section }: Props) {
   const { addLine, openCart } = useCartStore();
   const [filter, setFilter] = useState<Filter>('all');
   const [selected, setSelected] = useState<Product | null>(null);
@@ -78,22 +80,126 @@ function ProductCatalogInner({ products: seed }: Props) {
       : [];
   const mainImage = gallery[galleryIndex] ?? selected?.imageUrl ?? '/logo.webp';
   const meta = selected ? AVAILABILITY_META[selected.availability] : null;
+  const bg = sectionBgStyle(section?.backgroundUrl);
 
   return (
-    <section id="productos" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-      <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <TypingTitle
-            text="Nuestros productos"
-            tag="h2"
-            className="text-3xl sm:text-4xl"
+    <section id="productos" className={bg ? 'relative' : 'mx-auto max-w-6xl px-4 py-20 sm:px-6'} style={bg}>
+      {bg && (
+        <>
+          <div className="absolute inset-0 bg-background/60" aria-hidden="true" />
+          <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
+            <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <TypingTitle
+                  text={sectionTitle(section, 'Nuestros productos')}
+                  tag="h2"
+                  className="text-3xl sm:text-4xl"
+                />
+                <p className="mt-2 max-w-xl text-muted-foreground">
+                  {sectionSubtitle(
+                    section,
+                    'Piezas tejidas a mano, en stock o fabricadas bajo pedido.',
+                  )}
+                </p>
+              </div>
+            </header>
+            <CatalogBody
+              filter={filter}
+              setFilter={setFilter}
+              filtered={filtered}
+              openDetail={openDetail}
+              handleAdd={handleAdd}
+              selected={selected}
+              setSelected={setSelected}
+              gallery={gallery}
+              galleryIndex={galleryIndex}
+              setGalleryIndex={setGalleryIndex}
+              qty={qty}
+              setQty={setQty}
+              added={added}
+              mainImage={mainImage}
+              meta={meta}
+            />
+          </div>
+        </>
+      )}
+      {!bg && (
+        <>
+          <header className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <TypingTitle
+                text={sectionTitle(section, 'Nuestros productos')}
+                tag="h2"
+                className="text-3xl sm:text-4xl"
+              />
+              <p className="mt-2 max-w-xl text-muted-foreground">
+                {sectionSubtitle(
+                  section,
+                  'Piezas tejidas a mano, en stock o fabricadas bajo pedido.',
+                )}
+              </p>
+            </div>
+          </header>
+          <CatalogBody
+            filter={filter}
+            setFilter={setFilter}
+            filtered={filtered}
+            openDetail={openDetail}
+            handleAdd={handleAdd}
+            selected={selected}
+            setSelected={setSelected}
+            gallery={gallery}
+            galleryIndex={galleryIndex}
+            setGalleryIndex={setGalleryIndex}
+            qty={qty}
+            setQty={setQty}
+            added={added}
+            mainImage={mainImage}
+            meta={meta}
           />
-          <p className="mt-2 max-w-xl text-muted-foreground">
-            Piezas tejidas a mano, en stock o fabricadas bajo pedido.
-          </p>
-        </div>
-      </header>
+        </>
+      )}
+    </section>
+  );
+}
 
+interface CatalogBodyProps {
+  filter: Filter;
+  setFilter: (f: Filter) => void;
+  filtered: Product[];
+  openDetail: (p: Product) => void;
+  handleAdd: (id: string, qty: number) => void;
+  selected: Product | null;
+  setSelected: (p: Product | null) => void;
+  gallery: string[];
+  galleryIndex: number;
+  setGalleryIndex: (i: number) => void;
+  qty: number;
+  setQty: Dispatch<SetStateAction<number>>;
+  added: boolean;
+  mainImage: string;
+  meta: (typeof AVAILABILITY_META)[Product['availability']] | null;
+}
+
+function CatalogBody({
+  filter,
+  setFilter,
+  filtered,
+  openDetail,
+  handleAdd,
+  selected,
+  setSelected,
+  gallery,
+  galleryIndex,
+  setGalleryIndex,
+  qty,
+  setQty,
+  added,
+  mainImage,
+  meta,
+}: CatalogBodyProps) {
+  return (
+    <>
       <div
         className="mt-8 flex flex-wrap gap-2"
         role="tablist"
@@ -327,7 +433,7 @@ function ProductCatalogInner({ products: seed }: Props) {
           </div>
         </DialogContent>
       </Dialog>
-    </section>
+    </>
   );
 }
 

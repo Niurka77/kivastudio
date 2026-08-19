@@ -9,10 +9,11 @@ import type { Session } from '@supabase/supabase-js';
  * Usa `useSyncExternalStore` para que las islas re-rendericen sin discrepancias
  * de hidratación y sin llamar a setState en efectos (evita lint RHF/react-hooks).
  * La autorización REAL de escritura ocurre en el servidor (JWT + ADMIN_EMAILS +
- * rol owner); esto solo muestra/oculta la UI del panel.
+ * rol en admin_roles); esto solo muestra/oculta la UI del panel.
  *
- * Identidad: además del estado ok/denied, expone quién entró (email, nombre y
- * rol). La primera dirección de PUBLIC_ADMIN_EMAILS es la dueña (owner).
+ * El rol fino se obtiene del endpoint autenticado `/api/admin/me` (el navegador
+ * no puede leer `admin_roles` por RLS). Mientras llega, se usa un fallback
+ * (primera dirección de PUBLIC_ADMIN_EMAILS = dueña).
  */
 
 const ADMIN_EMAILS = env.adminEmails
@@ -21,7 +22,7 @@ const ADMIN_EMAILS = env.adminEmails
   .filter(Boolean);
 
 export type AdminStatus = 'loading' | 'ok' | 'denied';
-export type AdminRole = 'owner' | 'editor';
+export type AdminRole = 'owner' | 'trends' | 'videos' | 'products' | 'editor';
 
 export interface AdminIdentity {
   email: string;
@@ -31,6 +32,9 @@ export interface AdminIdentity {
 
 export const ROLE_LABEL: Record<AdminRole, string> = {
   owner: 'Dueña',
+  trends: 'Tendencias',
+  videos: 'Videos',
+  products: 'Productos',
   editor: 'Editora',
 };
 
@@ -67,6 +71,24 @@ function deriveName(email: string): string {
   return local.charAt(0).toUpperCase() + local.slice(1);
 }
 
+async function fetchRole(): Promise<AdminRole | null> {
+  const supabase = getSupabaseBrowserClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return null;
+  try {
+    const res = await fetch('/api/admin/me', {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as { role?: AdminRole };
+    return body.role ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function applyEmail(session: Session | null) {
   const email = session?.user?.email?.toLowerCase();
   if (email && ADMIN_EMAILS.includes(email)) {
@@ -74,11 +96,19 @@ function applyEmail(session: Session | null) {
     const name = meta?.full_name ?? deriveName(email);
     status = 'ok';
     identity = { email, name, role: getClientRole(email) };
+    emit();
+    // Rol fino (admin_roles) de forma asíncrona; no bloquea el acceso.
+    void fetchRole().then((role) => {
+      if (role && identity?.email === email) {
+        identity = { ...identity, role };
+        emit();
+      }
+    });
   } else {
     status = 'denied';
     identity = null;
+    emit();
   }
-  emit();
 }
 
 /** Inicializa (una vez) la sesión y escucha cambios de auth. Guarda para SSR. */

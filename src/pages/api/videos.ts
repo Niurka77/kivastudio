@@ -1,13 +1,13 @@
 import type { APIRoute } from 'astro';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { adminCan, getAdminUser } from '@/lib/auth/server-auth';
-import { createPostSchema } from '@/schemas/post';
-import type { Post } from '@/types';
+import { createVideoSchema } from '@/schemas/video';
+import type { Video } from '@/types';
 
 /**
- * Server endpoint de publicaciones (día a día del taller).
- * - GET:  el público lee las activas; un admin autenticado ve todas.
- * - POST: crea una publicación (solo admin).
+ * Server endpoint de videos de las creaciones.
+ * - GET:  el público lee los activos; un admin autenticado ve todos.
+ * - POST: crea un video (solo admin de videos o la dueña).
  */
 export const prerender = false;
 
@@ -17,24 +17,24 @@ function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), { status, headers: JSON_HEADERS });
 }
 
-interface PostRow {
+interface VideoRow {
   id: string;
-  title: string | null;
-  body: string | null;
-  media_url: string;
-  media_type: 'image' | 'video';
+  title: string;
+  description: string | null;
+  video_url: string;
+  thumbnail_url: string | null;
   active: boolean;
   created_at: string;
   updated_at: string;
 }
 
-function mapRow(row: PostRow): Post {
+function mapRow(row: VideoRow): Video {
   return {
     id: row.id,
     title: row.title,
-    body: row.body,
-    mediaUrl: row.media_url,
-    mediaType: row.media_type,
+    description: row.description,
+    videoUrl: row.video_url,
+    thumbnailUrl: row.thumbnail_url,
     active: row.active,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -45,7 +45,7 @@ export const GET: APIRoute = async ({ request }) => {
   const admin = await getAdminUser(request);
   const supabase = getSupabaseServiceClient();
 
-  let query = supabase.from('posts').select('*');
+  let query = supabase.from('videos').select('*');
   if (!admin) {
     query = query.eq('active', true);
   }
@@ -59,8 +59,8 @@ export const GET: APIRoute = async ({ request }) => {
 
 export const POST: APIRoute = async ({ request }) => {
   const admin = await getAdminUser(request);
-  if (!adminCan(admin, 'trends', 'editor')) {
-    return json({ message: 'No autorizado: se requiere iniciar sesión como admin' }, 401);
+  if (!adminCan(admin, 'videos', 'editor')) {
+    return json({ message: 'No autorizado: solo la dueña o la hermana de videos.' }, 401);
   }
 
   let body: unknown;
@@ -70,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ message: 'Cuerpo de la petición inválido' }, 400);
   }
 
-  const parsed = createPostSchema.safeParse(body);
+  const parsed = createVideoSchema.safeParse(body);
   if (!parsed.success) {
     const message = parsed.error.issues.map((i) => i.message).join(', ');
     return json({ message }, 400);
@@ -78,12 +78,12 @@ export const POST: APIRoute = async ({ request }) => {
 
   const d = parsed.data;
   const { data, error } = await getSupabaseServiceClient()
-    .from('posts')
+    .from('videos')
     .insert({
-      title: d.title ?? null,
-      body: d.body ?? null,
-      media_url: d.mediaUrl,
-      media_type: d.mediaType,
+      title: d.title,
+      description: d.description ?? null,
+      video_url: d.videoUrl,
+      thumbnail_url: d.thumbnailUrl ?? null,
       active: d.active ?? true,
     })
     .select()

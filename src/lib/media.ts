@@ -1,8 +1,8 @@
 /**
  * Medios privados (video de bienvenida y foto de la artesana).
  *
- * Los archivos viven en `private-media/` (NUNCA en `public/`), se sirven
- * únicamente a través del Server Endpoint `/api/media` y solo a quien
+ * Los archivos viven en un store PRIVADO de Vercel Blob (vercel-blob CLI), y se
+ * sirven únicamente a través del Server Endpoint `/api/media` y solo a quien
  * presente un token firmado de corta duración emitido por `/api/media-token`.
  *
  * Esto no es infalible (todo lo que el navegador renderiza se puede capturar),
@@ -10,11 +10,17 @@
  * (clic derecho, ver código fuente, etc.). Ver ADR B.5 / 02 §15.10.
  */
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import path from 'node:path';
 
 export const MEDIA_REGISTRY = {
-  'welcome-video': { file: 'welcome.mp4', mime: 'video/mp4' },
-  artesana: { file: 'artesana.webp', mime: 'image/webp' },
+  'welcome-video': {
+    // URL del blob privado (el store exige token para leer: sin él responde 403).
+    url: 'https://k0rayzwxixwyywsi.private.blob.vercel-storage.com/welcome.mp4',
+    mime: 'video/mp4',
+  },
+  artesana: {
+    url: 'https://k0rayzwxixwyywsi.private.blob.vercel-storage.com/artesana.webp',
+    mime: 'image/webp',
+  },
 } as const;
 
 export type MediaKey = keyof typeof MEDIA_REGISTRY;
@@ -35,11 +41,6 @@ function secret(): string {
     throw new Error(`Variable de entorno requerida no definida: ${SECRET_ENV}`);
   }
   return 'dev-only-secret-no-usar-en-produccion';
-}
-
-/** Ruta absoluta del archivo físico (relativa a la raíz del proyecto). */
-export function mediaPath(mediaKey: MediaKey): string {
-  return path.resolve(process.cwd(), 'private-media', MEDIA_REGISTRY[mediaKey].file);
 }
 
 export function signToken(file: string, expiresAt: number): string {
@@ -64,4 +65,23 @@ export function verifyToken(token: string, file: string): boolean {
   const actual = Buffer.from(sig);
   const expectedBuf = Buffer.from(expected);
   return actual.length === expectedBuf.length && timingSafeEqual(actual, expectedBuf);
+}
+
+/**
+ * Descarga un blob privado de Vercel Blob usando el token de lectura/escritura
+ * (server-side). Reenvía el header `Range` si viene, para streaming del video.
+ */
+export async function fetchPrivateBlob(
+  url: string,
+  range: string | null,
+): Promise<Response> {
+  const token = import.meta.env.BLOB_READ_WRITE_TOKEN as string | undefined;
+  if (!token) {
+    throw new Error('BLOB_READ_WRITE_TOKEN no está definido');
+  }
+
+  const headers: Record<string, string> = { Authorization: `Bearer ${token}` };
+  if (range) headers['Range'] = range;
+
+  return fetch(url, { headers });
 }

@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
-import { getAdminUser } from '@/lib/auth/server-auth';
+import { adminCan, getAdminUser } from '@/lib/auth/server-auth';
 import { updateProductSchema } from '@/schemas/product';
 import type { Product } from '@/types';
 
@@ -66,10 +66,10 @@ export const GET: APIRoute = async ({ params }) => {
   return json(mapRow(data));
 };
 
-/** Actualiza un producto (solo admin autenticado). */
+/** Actualiza un producto (solo admin de productos o la dueña). */
 export const PATCH: APIRoute = async ({ request, params }) => {
   const admin = await getAdminUser(request);
-  if (!admin) {
+  if (!adminCan(admin, 'products', 'editor')) {
     return json({ message: 'No autorizado' }, 401);
   }
 

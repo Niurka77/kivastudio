@@ -1,13 +1,21 @@
-import { readFile } from 'node:fs/promises';
 import type { APIRoute } from 'astro';
-import { isMediaKey, mediaPath, MEDIA_REGISTRY, verifyToken } from '@/lib/media';
+import {
+  fetchPrivateBlob,
+  isMediaKey,
+  MEDIA_REGISTRY,
+  verifyToken,
+} from '@/lib/media';
 
 /**
  * Sirve un medio privado (video de bienvenida / foto de la artesana) con
  * protección por token firmado de corta duración (header `Authorization`).
  *
+ * El archivo vive en un store PRIVADO de Vercel Blob; el servidor lo descarga
+ * con el token de lectura/escritura y reenvía el stream al navegador. El cliente
+ * nunca ve la URL del blob.
+ *
  * Medidas anti-descarga:
- * - No existe URL estática pública: el archivo vive en `private-media/`.
+ * - No existe URL pública: el blob es privado (sin token responde 403).
  * - `Cache-Control: no-store` + `private`: el navegador no lo persiste en disco.
  * - `Content-Disposition: inline` (nunca `attachment`).
  * - Soporte de HTTP Range para que el reproductor no se descargue todo de golpe.
@@ -27,78 +35,37 @@ export const GET: APIRoute = async ({ request }) => {
     return empty(401);
   }
 
-  let buffer: Buffer;
+  const range = request.headers.get('range');
+  let blob: Response;
   try {
-    buffer = await readFile(mediaPath(file));
+    blob = await fetchPrivateBlob(MEDIA_REGISTRY[file].url, range);
   } catch {
+    return empty(500);
+  }
+
+  if (blob.status !== 200 && blob.status !== 206) {
     return empty(404);
   }
 
-  const size = buffer.length;
-  const rangeHeader = request.headers.get('range');
-  const { status, headers, body } = sliceRange(buffer, size, rangeHeader);
-
+  const headers = new Headers();
   headers.set('Content-Type', `${MEDIA_REGISTRY[file].mime}; charset=utf-8`);
   headers.set('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
   headers.set('Content-Disposition', 'inline');
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('Accept-Ranges', 'bytes');
 
-  return new Response(body, { status, headers });
+  const contentLength = blob.headers.get('content-length');
+  if (contentLength) headers.set('Content-Length', contentLength);
+  const contentRange = blob.headers.get('content-range');
+  if (contentRange) headers.set('Content-Range', contentRange);
+
+  return new Response(blob.body, { status: blob.status, headers });
 };
 
 function bearerToken(header: string | null): string | null {
   if (!header) return null;
   const match = /^Bearer\s+(.+)$/i.exec(header);
   return match ? match[1] : null;
-}
-
-function sliceRange(
-  buffer: Buffer,
-  size: number,
-  rangeHeader: string | null,
-): { status: number; headers: Headers; body: Uint8Array<ArrayBuffer> } {
-  const headers = new Headers();
-
-  if (!rangeHeader) {
-    headers.set('Content-Length', String(size));
-    return { status: 200, headers, body: Uint8Array.from(buffer) };
-  }
-
-  const match = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
-  if (!match) {
-    return { status: 416, headers, body: new Uint8Array() };
-  }
-
-  let start: number;
-  let end: number;
-
-  if (match[1] === '' && match[2] === '') {
-    return { status: 416, headers, body: new Uint8Array() };
-  }
-
-  if (match[1] === '') {
-    // Rango sufijo: "bytes=-500" => últimos 500 bytes
-    const suffix = Number(match[2]);
-    start = Math.max(0, size - suffix);
-    end = size - 1;
-  } else {
-    start = Number(match[1]);
-    end = match[2] === '' ? size - 1 : Number(match[2]);
-  }
-
-  if (start > end || start >= size) {
-    headers.set('Content-Range', `bytes */${size}`);
-    return { status: 416, headers, body: new Uint8Array() };
-  }
-
-  end = Math.min(end, size - 1);
-  const body = Uint8Array.from(buffer.subarray(start, end + 1));
-
-  headers.set('Content-Range', `bytes ${start}-${end}/${size}`);
-  headers.set('Content-Length', String(body.length));
-
-  return { status: 206, headers, body };
 }
 
 function empty(status: number): Response {

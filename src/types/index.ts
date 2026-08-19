@@ -9,6 +9,12 @@ export type { Product, CreateProductInput, UpdateProductInput } from '@/schemas/
 export type { Order, OrderLine, CreateOrderInput, UpdateOrderInput, OrderStatus } from '@/schemas/order';
 export type { Review, CreateReviewInput, UpdateReviewInput } from '@/schemas/review';
 export type { Post, CreatePostInput, UpdatePostInput, MediaType } from '@/schemas/post';
+export type { Video, CreateVideoInput, UpdateVideoInput } from '@/schemas/video';
+export type {
+  SiteSection,
+  SectionKey,
+  UpdateSectionInput,
+} from '@/schemas/section';
 
 export type Availability = 'in_stock' | 'made_to_order';
 
